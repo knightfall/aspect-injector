@@ -84,3 +84,36 @@ These assertions establish a concrete counterexample and its cache/handle
 mechanism for the recorded revisions and environment. They do not prove that all
 applications contain such a reference cycle, or identify the cause of every
 `apphost.exe` access-denied report.
+
+## Verify the fix
+
+To reproduce the historical failure and check a fixed revision in the same run:
+
+```sh
+dotnet run --file reproductions/Issue244.ReferenceCycle/reproduce.cs -- --fixed HEAD --output artifacts/reference-cycle-fix-proof
+```
+
+`--fixed` adds a third immutable Git snapshot. The original P propositions still
+require the reviewed candidate to reproduce the regression. Additional F
+propositions require the fixed revision to receive identical fixture bytes and
+the same Cecil binary, resolve each cycle back-reference to the active target,
+perform zero underlying target loads, and release the target immediately after
+processing in both ownership modes. They also check resolver ownership and Linux
+file descriptors. With `--fixed`, exit code 0 requires both the historical
+counterexample and every remediation proposition to pass. The output adds
+`fixed/events.jsonl`, `fixed/observations.json`, and `FIX_VERIFIED` in the log.
+
+The fix temporarily registers the operation target in `CachedAssemblyResolver`,
+which is also used by dependency modules. The registration takes priority over
+persistent cache entries, restores a previous registration for nested processing,
+and is removed on success and exceptions. It neither adds the target to the
+persistent cache nor disposes borrowed dependencies. This also covers dependencies
+loaded before processing, without rebinding their module resolvers.
+
+`ReferenceCycleTests` adds 14 cases for owned and borrowed processing, modified
+and unmodified outputs, exceptions, preloaded dependencies, replaced input
+targets, existing caller cache entries, and nested operations. The tests assert
+canonical target identity and exclusive file access; a successful write alone
+would miss the Linux duplicate-instance defect.
+
+The existing historical evidence directories above remain unchanged.

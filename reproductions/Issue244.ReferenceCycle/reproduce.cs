@@ -30,13 +30,14 @@ internal static class Reproduction
         {
             ["--baseline"] = Baseline,
             ["--candidate"] = Candidate,
+            ["--fixed"] = "",
             ["--dotnet"] = "dotnet",
             ["--output"] = Path.Combine(Repository, "artifacts/reference-cycle-proof")
         };
         if (arguments.Contains("--help"))
         {
             Console.WriteLine("Compare immutable revisions and check the reference-cycle counterexample.\n" +
-                "Options: --baseline COMMIT --candidate COMMIT --dotnet PATH --output DIRECTORY");
+                "Options: --baseline COMMIT --candidate COMMIT [--fixed COMMIT] --dotnet PATH --output DIRECTORY");
             return 0;
         }
 
@@ -79,7 +80,8 @@ internal static class Reproduction
         var work = Directory.CreateTempSubdirectory("aspect-injector-cycle-proof-").FullName;
         try
         {
-            foreach (var label in new[] { "baseline", "candidate" })
+            var labels = options["--fixed"].Length == 0 ? new[] { "baseline", "candidate" } : new[] { "baseline", "candidate", "fixed" };
+            foreach (var label in labels)
             {
                 var source = Path.Combine(work, label + "-source");
                 var commit = await Command("git", ["rev-parse", "--verify", options["--" + label] + "^{commit}"]);
@@ -127,9 +129,10 @@ internal static class Reproduction
         }
 
         var checks = Evaluate(observations);
-        var reproduced = checks.All(check => check.passed);
+        var reproduced = checks.Where(check => check.id.StartsWith('P')).All(check => check.passed);
+        var fixVerified = observations.ContainsKey("fixed") ? checks.Where(check => check.id.StartsWith('F')).All(check => check.passed) : (bool?)null;
         WriteJson(output, "manifest.json", manifest);
-        WriteJson(output, "proof.json", new { schema = 1, regression_reproduced = reproduced, checks });
+        WriteJson(output, "proof.json", new { schema = fixVerified.HasValue ? 2 : 1, regression_reproduced = reproduced, fix_verified = fixVerified, checks });
         var baseline = observations["baseline"];
         var candidate = observations["candidate"];
         var report = new List<string>
@@ -143,6 +146,8 @@ internal static class Reproduction
             "| Revision | Case | B = T | Process completed | X(target) after Process | X(target) after resolver disposal |",
             "| --- | --- | --- | --- | --- | --- |"
         };
+        if (observations.TryGetValue("fixed", out var fixedRevision))
+            report.Insert(4, $"Fixed revision: `{fixedRevision["revision"]}`.");
         foreach (var (label, revision) in observations)
             foreach (var row in Cases(revision))
                 report.Add($"| {label} | {row["name"]} | {Display(row["back_reference_is_operation_target"])} | " +
@@ -164,13 +169,19 @@ internal static class Reproduction
             "Raw traces: baseline/events.jsonl and candidate/events.jsonl. Machine assertions: proof.json.",
             "Source/binary/input identities: manifest.json and each observations.json."
         ]);
+        if (fixVerified.HasValue)
+            report.AddRange(["", fixVerified.Value
+                ? "The fixed revision passes every remediation proposition: cycle back-references resolve to T, no underlying target load occurs, and target handles are released after Process for both ownership modes."
+                : "The fixed revision did not pass every remediation proposition; inspect the failed F checks.",
+                "Fixed-revision raw trace: fixed/events.jsonl. This verifies the recorded fixture; broader lifecycle and reuse cases are covered by ReferenceCycleTests."]);
         File.WriteAllLines(Path.Combine(output, "proof.md"), report, Utf8);
         var lines = checks.Select(check => $"{check.id} {(check.passed ? "PASS" : "FAIL")} {check.proposition}")
-            .Append($"REGRESSION_REPRODUCED={reproduced.ToString().ToLowerInvariant()}").ToArray();
+            .Append($"REGRESSION_REPRODUCED={reproduced.ToString().ToLowerInvariant()}").ToList();
+        if (fixVerified.HasValue) lines.Add($"FIX_VERIFIED={fixVerified.Value.ToString().ToLowerInvariant()}");
         File.WriteAllLines(Path.Combine(output, "reproduction.log"), lines, Utf8);
         foreach (var line in lines) Console.WriteLine(line);
         Console.WriteLine($"Evidence directory: {output}");
-        return reproduced ? 0 : 1;
+        return reproduced && fixVerified != false ? 0 : 1;
     }
 
     private static List<Check> Evaluate(Dictionary<string, JsonNode> observations)
@@ -224,6 +235,29 @@ internal static class Reproduction
                 Check("P12", "Linux independently shows an extra target FD, then zero after cache disposal",
                     borrowed["target_fds_before"]!.GetValue<int>() == 0 && borrowed["target_fds_after_process"]!.GetValue<int>() > 0 &&
                     borrowed["target_fds_after_resolver_dispose"]!.GetValue<int>() == 0);
+        }
+        if (observations.TryGetValue("fixed", out var fixedRevision))
+        {
+            var fixedCases = Cases(fixedRevision).ToArray();
+            Check("F1", "Fixed and reviewed revisions use the same Mono.Cecil binary",
+                JsonNode.DeepEquals(fixedRevision["cecil_sha256"], candidate["cecil_sha256"]));
+            Check("F2", "Fixed and reviewed revisions receive byte-identical fixture assemblies", fixedCases.Length == headCases.Count &&
+                fixedCases.Select(row => row["name"]!.GetValue<string>()).Distinct().Count() == headCases.Count && fixedCases.All(row =>
+                new[] { "target_input_sha256", "dependency_input_sha256" }.All(key => JsonNode.DeepEquals(row[key], headCases[row["name"]!.GetValue<string>()][key]))));
+            Check("F3", "Every fixed-revision fixture is CLR-valid and initially unlocked", fixedCases.All(row =>
+                Bool(row["clr_graph_valid"]) && Bool(row["before"]!["succeeded"])));
+            Check("F4", "Every fixed-revision operation completes and direct self-resolution returns T", fixedCases.All(row =>
+                Bool(row["process_completed"]) && row["process_exception"] is null && Bool(row["direct_self_is_operation_target"])));
+            Check("F5", "Fixed cycle back-references resolve to the operation-owned target T", fixedCases.Where(row => Bool(row["cycle"])).All(row =>
+                Bool(row["back_reference_is_operation_target"]) && !Bool(row["back_reference_was_loaded_by_underlying_cache"])));
+            Check("F6", "The fixed resolver performs zero underlying target loads", fixedCases.All(row => row["target_lookup_attempts"]!.AsArray().Count == 0));
+            Check("F7", "Every fixed-revision target is unlocked immediately after Process and after resolver disposal", fixedCases.All(row =>
+                Bool(row["after_process"]!["succeeded"]) && Bool(row["after_resolver_dispose"]!["succeeded"])));
+            Check("F8", "Processing disposes owned resolvers once and leaves borrowed resolvers undisposed", fixedCases.All(row =>
+                row["resolver_disposals_after_process"]!.GetValue<int>() == (Bool(row["owned_resolver"]) ? 1 : 0)));
+            if (OperatingSystem.IsLinux())
+                Check("F9", "Linux independently reports zero target FDs after fixed processing", fixedCases.All(row =>
+                    row["target_fds_after_process"]!.GetValue<int>() == 0 && row["target_fds_after_resolver_dispose"]!.GetValue<int>() == 0));
         }
         return checks;
     }
