@@ -47,7 +47,11 @@ The default output directory is `artifacts/reference-cycle-proof`:
 | `{baseline,candidate}/observations.json` | Complete observations, including input hashes and exceptions |
 | `{baseline,candidate}/build.log` | Actual build output |
 
-A captured Linux run is checked in under [evidence/linux](evidence/linux/proof.md).
+Captured runs are checked in under [evidence/linux](evidence/linux/proof.md) and
+[evidence/windows](evidence/windows/proof.md). The Windows run came from
+[GitHub Actions run 39813372739](https://github.com/knightfall/aspect-injector/actions/runs/39813372739);
+its [provenance record](evidence/windows/ci-source.json) identifies the commit,
+job, artifact, and verified archive digest.
 The [reproduction workflow](../../.github/workflows/reference-cycle-proof.yml)
 runs the same collector on Windows and Linux and uploads all evidence as
 `reference-cycle-proof-Windows` and `reference-cycle-proof-Linux` artifacts.
@@ -73,8 +77,8 @@ distinguishes the identity error from cleanup at the end of the outer operation.
 
 On Windows, the collector instead requires an actual `IOException` with
 `ERROR_SHARING_VIOLATION` (32) during the extra read-only target lookup, for both
-owned and borrowed resolvers. The checked-in Linux evidence makes no claim that
-Windows was executed; Windows evidence is recorded separately by CI.
+owned and borrowed resolvers. The checked-in Windows evidence records this
+failure in both cases, with HRESULT `0x80070020` and full exception stack traces.
 
 These assertions establish a concrete counterexample and its cache/handle
 mechanism for the recorded revisions and environment. They do not prove that all

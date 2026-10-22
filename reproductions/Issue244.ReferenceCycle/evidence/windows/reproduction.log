@@ -1,0 +1,11 @@
+P1 PASS Both executions use the same Mono.Cecil binary
+P2 PASS Both revisions receive byte-identical inputs for every corresponding case
+P3 PASS CLR accepts the non-cyclic inheritance chain, including the assembly-reference cycle
+P4 PASS Every input DLL can be opened exclusively before processing
+P5 PASS The control succeeds and releases the target in both revisions
+P6 PASS The baseline resolves cycle back-references to the operation target and releases its file
+P7 PASS Candidate dependency modules use the underlying resolver
+P8 PASS The candidate attempts an extra read-only target load through the underlying resolver
+P9 PASS Windows reports ERROR_SHARING_VIOLATION (32) during both candidate cycle operations
+P10 PASS Unwinding the failed operations releases the target
+REGRESSION_REPRODUCED=true
