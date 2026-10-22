@@ -1,51 +1,66 @@
 name: Application
 on:
   push:
-    branches: 
-        - master
-    tags: 
-        - '**'
-  pull_request:  
+    branches:
+      - master
+    tags:
+      - '**'
+  pull_request:
 
 env:
   app_release: false
   app_conf: Release
   nuget_url: https://api.nuget.org/v3/index.json
 
-jobs:  
+defaults:
+  run:
+    shell: bash
+
+jobs:
   build:
-    runs-on: ubuntu-latest    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 8.0.x
-    - name: Get version
-      run:  echo "app_version=`git describe --tags`" >> $GITHUB_ENV
-    - name: Get release status
-      run:  echo "app_release=`(git describe --tags --exact-match>/dev/null 2>&1 && echo true) || echo false`" >> $GITHUB_ENV
-    - name: Status
-      run: echo "Release=$app_release, version=$app_version"
-    - name: Compile
-      run: dotnet build -c $app_conf -p:Version=$app_version -p:InformationalVersion="$app_version:$GITHUB_SHA"
-    - name: Test net6
-      run: dotnet test -c $app_conf --no-build -f net6.0
-    - name: Test net8
-      run: dotnet test -c $app_conf --no-build -f net8.0
-    - name: Pack
-      run: dotnet pack -c $app_conf -o `pwd`/artifacts -p:Version=$app_version -p:InformationalVersion="$app_version:$GITHUB_SHA" -p:CommitSHA=$GITHUB_SHA
-    - uses: actions/upload-artifact@v4
-      with:
-        name: artifacts
-        path: ./artifacts
-    - name: Publish
-      if: env.app_release == 'true'
-      env:
-        NUGETKEY: ${{ secrets.NUGET_KEY }}
-      working-directory: artifacts
-      run: dotnet nuget push ./*.nupkg -s $nuget_url -k $NUGETKEY     
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            10.0.x
+      - name: Get version
+        run: echo "app_version=$(git describe --tags --abbrev=0 2>/dev/null || echo 0.0.0)" >> "$GITHUB_ENV"
+      - name: Get release status
+        run: |
+          if git describe --tags --exact-match >/dev/null 2>&1; then
+            echo "app_release=true" >> "$GITHUB_ENV"
+          fi
+      - name: Compile
+        run: dotnet build -c "$app_conf" -p:Version="$app_version" -p:InformationalVersion="$app_version:$GITHUB_SHA"
+      - name: Test .NET 6 runtime
+        run: dotnet test tests/AspectInjector.Tests.Runtime -c "$app_conf" --no-build -f net6.0
+      - name: Test .NET 6 Visual Basic
+        run: dotnet test tests/AspectInjector.Tests.VBRuntime -c "$app_conf" --no-build -f net6.0
+      - name: Test .NET 8
+        run: dotnet test -c "$app_conf" --no-build -f net8.0
+      - name: Test .NET 10
+        run: dotnet test -c "$app_conf" --no-build -f net10.0
+      - name: Pack
+        if: runner.os == 'Linux'
+        run: dotnet pack -c "$app_conf" --no-restore -o artifacts -p:Version="$app_version" -p:InformationalVersion="$app_version:$GITHUB_SHA" -p:CommitSHA="$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Linux'
+        with:
+          name: artifacts
+          path: ./artifacts
+      - name: Publish
+        if: runner.os == 'Linux' && env.app_release == 'true'
+        env:
+          NUGETKEY: ${{ secrets.NUGET_KEY }}
+        working-directory: artifacts
+        run: dotnet nuget push ./*.nupkg -s "$nuget_url" -k "$NUGETKEY"

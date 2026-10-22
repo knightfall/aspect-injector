@@ -19,10 +19,11 @@ namespace FluentIL
 
         public void Process(string assemblyFile, IReadOnlyList<string> references, bool optimize, bool verbose)
         {
-            var resolver = GetResolver(assemblyFile, references);
-            if (_log.IsErrorThrown) return;
-
-            Process(assemblyFile, resolver, optimize, verbose);
+            using (var resolver = GetResolver(assemblyFile, references))
+            {
+                if (_log.IsErrorThrown) return;
+                Process(assemblyFile, resolver, optimize, verbose);
+            }
         }
 
         public void Process(string assemblyFile, IAssemblyResolver resolver, bool optimize, bool verbose)
@@ -36,18 +37,29 @@ namespace FluentIL
             if (verbose) _log.Log(GenericInfoRule, $"Started for {Path.GetFileName(assemblyFile)}");
 
             var pdbPresent = AreSymbolsFound(assemblyFile);
-            var assembly = ReadAssembly(assemblyFile, resolver, pdbPresent, verbose);
-
-            var modified = PatchAssembly(assembly, optimize, verbose);
-
-            if (!_log.IsErrorThrown)
+            using (var assembly = ReadAssembly(assemblyFile, resolver, pdbPresent))
             {
-                if (modified)
+                try
                 {
-                    if (verbose) _log.Log(GenericInfoRule, "Assembly has been patched.");
-                    WriteAssembly(assembly, pdbPresent, verbose);
+                    if (verbose) _log.Log(GenericInfoRule, "Assembly has been read.");
+                    var modified = PatchAssembly(assembly, optimize, verbose);
+
+                    if (!_log.IsErrorThrown)
+                    {
+                        if (modified)
+                        {
+                            if (verbose) _log.Log(GenericInfoRule, "Assembly has been patched.");
+                            WriteAssembly(assembly, pdbPresent, verbose);
+                        }
+                        else if (verbose) _log.Log(GenericInfoRule, "No patching required.");
+                    }
                 }
-                else if (verbose) _log.Log(GenericInfoRule, "No patching required.");
+                finally
+                {
+                    // The target belongs to this operation; dependencies belong to the resolver.
+                    // Keep the target cached while weaving so self-references resolve to this instance.
+                    (resolver as CachedAssemblyResolver)?.UnregisterAssembly(assembly);
+                }
             }
         }
 
@@ -67,27 +79,19 @@ namespace FluentIL
             return resolver;
         }
 
-        private AssemblyDefinition ReadAssembly(string assemblyFile, IAssemblyResolver resolver, bool readSymbols,bool verbose)
+        private AssemblyDefinition ReadAssembly(string assemblyFile, IAssemblyResolver resolver, bool readSymbols)
         {
-            var assembly = AssemblyDefinition.ReadAssembly(assemblyFile,
-                new ReaderParameters
-                {
-                    ReadingMode = ReadingMode.Deferred
-                });
+            AssemblyNameDefinition name;
+            using (var header = AssemblyDefinition.ReadAssembly(assemblyFile))
+                name = header.Name;
 
-            assembly.Dispose();
-
-            assembly = resolver.Resolve(assembly.Name, new ReaderParameters
+            return resolver.Resolve(name, new ReaderParameters
             {
                 ReadingMode = ReadingMode.Immediate,
                 ReadWrite = true,
                 AssemblyResolver = resolver,
                 ReadSymbols = readSymbols
             });
-
-            if (verbose) _log.Log(GenericInfoRule, "Assembly has been read.");
-
-            return assembly;
         }
 
         private void WriteAssembly(AssemblyDefinition assembly, bool writeSymbols, bool verbose)
@@ -100,11 +104,6 @@ namespace FluentIL
             }
 
             assembly.Write(param);
-
-            if (assembly.MainModule.SymbolReader != null)
-                assembly.MainModule.SymbolReader.Dispose();
-
-            assembly.Dispose();
 
             if (verbose) _log.Log(GenericInfoRule, "Assembly has been written.");
         }

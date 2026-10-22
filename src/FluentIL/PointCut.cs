@@ -11,7 +11,16 @@ namespace FluentIL
 
     public static class CutEvents
     {
-        public static Action<MethodBody> OnModify { get; set; } = m => { };
+        [ThreadStatic]
+        private static Action<MethodBody> _onModify;
+
+        public static Action<MethodBody> OnModify
+        {
+            get => _onModify ?? Ignore;
+            set => _onModify = value;
+        }
+
+        private static void Ignore(MethodBody body) { }
     }
 
     public readonly struct Cut
