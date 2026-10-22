@@ -13,7 +13,8 @@ namespace AspectInjector.Core.Services
 {
     public class AspectReader : IAspectReader
     {
-        private static readonly ConcurrentDictionary<TypeDefinition, AspectDefinition> _cache = new ConcurrentDictionary<TypeDefinition, AspectDefinition>();
+        // Extraction results belong to this reader's effect providers.
+        private readonly ConcurrentDictionary<TypeDefinition, AspectDefinition> _cache = new ConcurrentDictionary<TypeDefinition, AspectDefinition>();
 
         private readonly IEnumerable<IEffectReader> _effectExtractors;
         private readonly ILogger _log;

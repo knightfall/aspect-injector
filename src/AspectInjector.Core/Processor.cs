@@ -56,6 +56,7 @@ namespace AspectInjector.Core
             }
 
             var modifiedBodies = new List<MethodBody>();
+            var previousOnModify = CutEvents.OnModify;
             CutEvents.OnModify = mb =>
             {
                 if (!modifiedBodies.Contains(mb))
@@ -65,41 +66,49 @@ namespace AspectInjector.Core
                 }
             };
 
-            if (hasInjections)
+            try
             {
-                if (verbose) _log.Log(GeneralRules.Info, "Processing injections...");
-
-                foreach (var injector in _effectWeavers.OrderByDescending(i => i.Priority))
+                if (hasInjections)
                 {
-                    if (verbose) _log.Log(GeneralRules.Info, $"Executing {injector.GetType().Name}...");
+                    if (verbose) _log.Log(GeneralRules.Info, "Processing injections...");
 
-                    foreach (var prioritizedInjections in injections.GroupBy(i => i.Priority).OrderByDescending(a => a.Key).ToList())
-                        foreach (var injection in prioritizedInjections.OrderByDescending(i => i.Effect.Priority))
-                            if (injector.CanWeave(injection))
-                            {
-                                injector.Weave(injection);
-                                injections.Remove(injection);
-                            }
+                    foreach (var injector in _effectWeavers.OrderByDescending(i => i.Priority))
+                    {
+                        if (verbose) _log.Log(GeneralRules.Info, $"Executing {injector.GetType().Name}...");
+
+                        foreach (var prioritizedInjections in injections.GroupBy(i => i.Priority).OrderByDescending(a => a.Key).ToList())
+                            foreach (var injection in prioritizedInjections.OrderByDescending(i => i.Effect.Priority))
+                                if (injector.CanWeave(injection))
+                                {
+                                    injector.Weave(injection);
+                                    injections.Remove(injection);
+                                }
+                    }
+
+                    foreach (var injection in injections)
+                        _log.Log(GeneralRules.UnexpectedCompilerBehaviour, injection.Target, $"Couldn't find weaver for => {injection.ToString()}");
                 }
 
-                foreach (var injection in injections)
-                    _log.Log(GeneralRules.UnexpectedCompilerBehaviour, injection.Target, $"Couldn't find weaver for => {injection.ToString()}");
-            }
-
-            if (hasAspects || hasInjections)
-            {
-                if (optimize)
+                if (hasAspects || hasInjections)
                 {
-                    if (verbose) _log.Log(GeneralRules.Info, "Optimizing...");
-                    foreach (var mb in modifiedBodies)
-                        mb.OptimizeMacros();
+                    if (optimize)
+                    {
+                        if (verbose) _log.Log(GeneralRules.Info, "Optimizing...");
+                        foreach (var mb in modifiedBodies)
+                            mb.OptimizeMacros();
+                    }
+
+                    if (verbose) _log.Log(GeneralRules.Info, "Processing is done.");
+                    return true;
                 }
 
-                if (verbose) _log.Log(GeneralRules.Info, "Processing is done.");
-                return true;
+                return false;
             }
-
-            return false;
+            finally
+            {
+                // Restore the caller's callback after nested or failed weaving.
+                CutEvents.OnModify = previousOnModify;
+            }
         }
     }
 }

@@ -7,14 +7,15 @@ using FluentIL.Extensions;
 using FluentIL.Logging;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Linq;
 
 namespace AspectInjector.Core.Advice.Weavers.Processes
 {
     internal class AdviceAfterProcess : AdviceWeaveProcessBase<AfterAdviceEffect>
     {
-        private static readonly Dictionary<MethodBody, VariableDefinition> _returnVariablesCache = new Dictionary<MethodBody, VariableDefinition>();
+        // Reuse return locals without retaining completed method bodies.
+        private static readonly ConditionalWeakTable<MethodBody, VariableDefinition> _returnVariablesCache = new ConditionalWeakTable<MethodBody, VariableDefinition>();
 
         private readonly VariableDefinition _retvar;
 
