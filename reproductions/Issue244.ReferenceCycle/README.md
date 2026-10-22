@@ -116,4 +116,6 @@ targets, existing caller cache entries, and nested operations. The tests assert
 canonical target identity and exclusive file access; a successful write alone
 would miss the Linux duplicate-instance defect.
 
-The existing historical evidence directories above remain unchanged.
+The existing historical evidence directories above remain unchanged. New
+[before/after proof and test logs](evidence/fix-verification/README.md) record
+verification of the fix and a negative control that rejects the buggy revision.
