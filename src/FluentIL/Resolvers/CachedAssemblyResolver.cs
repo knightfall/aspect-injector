@@ -1,7 +1,6 @@
 ﻿using Mono.Cecil;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FluentIL.Resolvers
 {
@@ -37,12 +36,6 @@ namespace FluentIL.Resolvers
                 return;
 
             _cache[name] = assembly;
-        }
-
-        internal void UnregisterAssembly(AssemblyDefinition assembly)
-        {
-            foreach (var name in _cache.Where(entry => ReferenceEquals(entry.Value, assembly)).Select(entry => entry.Key).ToArray())
-                _cache.Remove(name);
         }
 
         protected override void Dispose(bool disposing)

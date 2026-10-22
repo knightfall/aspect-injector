@@ -37,28 +37,22 @@ namespace FluentIL
             if (verbose) _log.Log(GenericInfoRule, $"Started for {Path.GetFileName(assemblyFile)}");
 
             var pdbPresent = AreSymbolsFound(assemblyFile);
-            using (var assembly = ReadAssembly(assemblyFile, resolver, pdbPresent))
+            using (var targetResolver = new TargetAssemblyResolver(resolver))
+            using (var assembly = ReadAssembly(assemblyFile, targetResolver, pdbPresent))
             {
-                try
-                {
-                    if (verbose) _log.Log(GenericInfoRule, "Assembly has been read.");
-                    var modified = PatchAssembly(assembly, optimize, verbose);
+                // Only this operation owns the target; the borrowed resolver supplies dependencies.
+                targetResolver.Target = assembly;
+                if (verbose) _log.Log(GenericInfoRule, "Assembly has been read.");
+                var modified = PatchAssembly(assembly, optimize, verbose);
 
-                    if (!_log.IsErrorThrown)
-                    {
-                        if (modified)
-                        {
-                            if (verbose) _log.Log(GenericInfoRule, "Assembly has been patched.");
-                            WriteAssembly(assembly, pdbPresent, verbose);
-                        }
-                        else if (verbose) _log.Log(GenericInfoRule, "No patching required.");
-                    }
-                }
-                finally
+                if (!_log.IsErrorThrown)
                 {
-                    // The target belongs to this operation; dependencies belong to the resolver.
-                    // Keep the target cached while weaving so self-references resolve to this instance.
-                    (resolver as CachedAssemblyResolver)?.UnregisterAssembly(assembly);
+                    if (modified)
+                    {
+                        if (verbose) _log.Log(GenericInfoRule, "Assembly has been patched.");
+                        WriteAssembly(assembly, pdbPresent, verbose);
+                    }
+                    else if (verbose) _log.Log(GenericInfoRule, "No patching required.");
                 }
             }
         }
@@ -81,13 +75,11 @@ namespace FluentIL
 
         private AssemblyDefinition ReadAssembly(string assemblyFile, IAssemblyResolver resolver, bool readSymbols)
         {
-            AssemblyNameDefinition name;
-            using (var header = AssemblyDefinition.ReadAssembly(assemblyFile))
-                name = header.Name;
-
-            return resolver.Resolve(name, new ReaderParameters
+            return AssemblyDefinition.ReadAssembly(assemblyFile, new ReaderParameters
             {
-                ReadingMode = ReadingMode.Immediate,
+                // Register the target before resolving its metadata. Cecil materializes deferred
+                // metadata before writing, so rewriting the original stream remains safe.
+                ReadingMode = ReadingMode.Deferred,
                 ReadWrite = true,
                 AssemblyResolver = resolver,
                 ReadSymbols = readSymbols

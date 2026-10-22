@@ -100,6 +100,35 @@ namespace AspectInjector.Tests.Build
             AssertUnlocked(Path.ChangeExtension(dependency, ".pdb"));
         }
 
+        [Theory]
+        [InlineData(PatchResult.Unmodified, false)]
+        [InlineData(PatchResult.Modified, false)]
+        [InlineData(PatchResult.Unmodified, true)]
+        [InlineData(PatchResult.Modified, true)]
+        public void BorrowedCachingResolversCanBeReusedAcrossProcessingOperations(PatchResult result, bool cacheParameterizedReads)
+        {
+            var target = CreateAssembly("Target");
+            var dependency = CreateAssembly("Dependency");
+            using var resolver = cacheParameterizedReads ? new ExternalCachingResolver() : new DefaultAssemblyResolver();
+            resolver.AddSearchDirectory(_directory);
+            var patcher = new TestPatcher(new TestLogger(), result);
+
+            patcher.Process(target, resolver, false, false);
+            var first = patcher.Target;
+            AssertUnlocked(target);
+            // Replace the input between operations to detect stale cached metadata too.
+            CreateAssembly("Target");
+
+            patcher.Process(target, resolver, false, false);
+
+            Assert.NotSame(first, patcher.Target);
+            Assert.NotEqual(first.MainModule.Mvid, patcher.Target.MainModule.Mvid);
+            AssertUnlocked(target);
+            AssertUnlocked(Path.ChangeExtension(target, ".pdb"));
+            resolver.Dispose();
+            AssertUnlocked(dependency);
+        }
+
         [Fact]
         public void OwnedResolverIsDisposedBeforeEarlyReturn()
         {
@@ -287,6 +316,33 @@ namespace AspectInjector.Tests.Build
             protected override void Dispose(bool disposing)
             {
                 DisposeCount++;
+                base.Dispose(disposing);
+            }
+        }
+
+        // Models a caller-owned resolver that caches both IAssemblyResolver overloads.
+        private sealed class ExternalCachingResolver : DefaultAssemblyResolver
+        {
+            private readonly Dictionary<string, AssemblyDefinition> _cache = new Dictionary<string, AssemblyDefinition>();
+
+            public override AssemblyDefinition Resolve(AssemblyNameReference name)
+                => Resolve(name, new ReaderParameters());
+
+            public override AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
+            {
+                if (!_cache.TryGetValue(name.FullName, out var assembly))
+                    _cache[name.FullName] = assembly = base.Resolve(name, parameters);
+                return assembly;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    foreach (var assembly in _cache.Values)
+                        assembly.Dispose();
+                    _cache.Clear();
+                }
                 base.Dispose(disposing);
             }
         }
