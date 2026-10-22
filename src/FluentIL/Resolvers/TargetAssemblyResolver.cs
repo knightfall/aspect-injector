@@ -23,6 +23,7 @@ namespace FluentIL.Resolvers
                 _registration?.Dispose();
                 _registration = null;
                 _target = value;
+                // Make dependency back-references find the active target too.
                 if (value != null && _dependencies is CachedAssemblyResolver resolver)
                     _registration = resolver.UseTarget(value);
             }

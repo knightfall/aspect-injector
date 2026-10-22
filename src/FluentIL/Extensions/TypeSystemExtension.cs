@@ -3,19 +3,13 @@ using Mono.Cecil.Rocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace FluentIL.Extensions
 {
     public static class TypeSystemExtension
     {
-        private static readonly ConditionalWeakTable<ModuleDefinition, ModuleCache> _moduleCaches = new ConditionalWeakTable<ModuleDefinition, ModuleCache>();
-
-        private sealed class ModuleCache
-        {
-            public readonly Dictionary<StandardType, TypeReference> Types = new Dictionary<StandardType, TypeReference>();
-            public readonly HashSet<string> InvalidHints = new HashSet<string>();
-        }
+        private static readonly Dictionary<(StandardType, ModuleDefinition), TypeReference> _typeCache = new Dictionary<(StandardType, ModuleDefinition), TypeReference>();
+        private static readonly List<(string, ModuleDefinition)> _invalidHints = new List<(string, ModuleDefinition)>();
         public static TypeReference ImportStandardType(this ModuleDefinition module, StandardType standardType)
         {
             var tr = GetTypeRef(standardType, module);
@@ -24,8 +18,7 @@ namespace FluentIL.Extensions
 
         private static TypeReference GetTypeRef(StandardType type, ModuleDefinition module)
         {
-            var cache = _moduleCaches.GetValue(module, _ => new ModuleCache());
-            if (!cache.Types.TryGetValue(type, out var tr))
+            if (!_typeCache.TryGetValue((type, module), out var tr))
             {
                 var lib = GetMetadataScope(module, type);
                 tr = new TypeReference(type.Namespace, type.Name, module, lib, type.IsValueType);    
@@ -48,7 +41,7 @@ namespace FluentIL.Extensions
                 if (type.IsArray)
                     tr = new ArrayType(tr);
 
-                cache.Types[type] = tr;
+                _typeCache[(type, module)] = tr;
             }
 
             return tr;
@@ -59,10 +52,9 @@ namespace FluentIL.Extensions
             if (type.AssemblyHints.Count == 0)
                 return module.TypeSystem.CoreLibrary;
 
-            var cache = _moduleCaches.GetValue(module, _ => new ModuleCache());
             foreach (var hint in type.AssemblyHints)
             {
-                if (cache.InvalidHints.Contains(hint))
+                if (_invalidHints.Contains((hint, module)))
                     continue;
 
                 var assmName = new AssemblyNameReference(hint, new Version());
@@ -74,7 +66,7 @@ namespace FluentIL.Extensions
                 }
                 catch
                 {
-                    cache.InvalidHints.Add(hint);
+                    _invalidHints.Add((hint, module));
                     continue;
                 }
 

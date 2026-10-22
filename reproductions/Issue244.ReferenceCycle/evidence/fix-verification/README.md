@@ -4,6 +4,11 @@ Implementation commit: `627966b299595db7ff2b775709bb575b7d36913a`.
 Reviewed regression: `159da826cc1f6f12ae2da3c5573d1de38b4769a8`.
 Original baseline: `fb24e3ce40b99e15d2af3cd40e0f0821ddafa197`.
 
+These are historical captures of the commits identified below. The later
+[scope review](../../scope-review.md) moves four cache/callback cases to a
+follow-up branch; the active build-test suite now has 31 cases. Recorded logs,
+assertions, and manifests are unchanged.
+
 The [Linux proof](linux/proof.md) rebuilds all three immutable snapshots with the
 same probe. All 12 historical P propositions and all 9 fix F propositions pass.
 The fixed snapshot resolves the dependency back-reference to the active target,

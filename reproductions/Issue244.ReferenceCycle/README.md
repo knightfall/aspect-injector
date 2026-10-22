@@ -7,6 +7,9 @@ back to the target through the underlying cache, bypassing `TargetAssemblyResolv
 The fixture has an assembly-reference cycle and an acyclic, CLR-validated type
 hierarchy: `Target.Leaf : Dependency.Middle : Target.Root : System.Object`.
 
+The [scope review](scope-review.md) records why compilation cache and callback
+hardening was moved to a separate branch. Historical captures remain unchanged.
+
 ## Run
 
 From a checkout of this PR with its Git history available, install the .NET 10

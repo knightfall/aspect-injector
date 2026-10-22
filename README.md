@@ -69,7 +69,7 @@ dotnet test tests/AspectInjector.Tests.VBRuntime -c Release --no-build -f net6.0
 ```
 
 The build tests check DLL/PDB handle release after successful, unchanged, and
-failed processing, resolver ownership, and cache isolation. They also build,
+failed processing, resolver ownership, and dependency reference cycles. They also build,
 rebuild, and run console applications with and without aspects using both the
 .NET 8 and .NET 10 SDKs. CI runs these tests on Windows and Linux.
 

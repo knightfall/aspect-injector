@@ -19,6 +19,7 @@ namespace FluentIL
 
         public void Process(string assemblyFile, IReadOnlyList<string> references, bool optimize, bool verbose)
         {
+            // This overload owns the resolver and its cached dependencies.
             using (var resolver = GetResolver(assemblyFile, references))
             {
                 if (_log.IsErrorThrown) return;
@@ -37,6 +38,7 @@ namespace FluentIL
             if (verbose) _log.Log(GenericInfoRule, $"Started for {Path.GetFileName(assemblyFile)}");
 
             var pdbPresent = AreSymbolsFound(assemblyFile);
+            // Close the target and symbols even when weaving is skipped or fails.
             using (var targetResolver = new TargetAssemblyResolver(resolver))
             using (var assembly = ReadAssembly(assemblyFile, targetResolver, pdbPresent))
             {

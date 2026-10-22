@@ -7,12 +7,12 @@ namespace FluentIL.Resolvers
     public class CachedAssemblyResolver : BaseAssemblyResolver
     {
         private readonly Dictionary<string, AssemblyDefinition> _cache = new Dictionary<string, AssemblyDefinition>();
+        // Active targets are borrowed; only persistent cache entries are owned here.
         private readonly Dictionary<string, AssemblyDefinition> _targets = new Dictionary<string, AssemblyDefinition>();
 
         public override AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
         {
-            // Dependencies retain this resolver, including when they were loaded before Process.
-            // Resolve their back-references without caching or taking ownership of the target.
+            // Preloaded dependencies resolve back-references through this instance too.
             if (_targets.TryGetValue(name.FullName, out var target))
                 return target;
 
@@ -46,6 +46,7 @@ namespace FluentIL.Resolvers
             public void Dispose()
             {
                 if (_resolver == null) return;
+                // Nested processing must restore the enclosing target registration.
                 if (_previous == null)
                     _resolver._targets.Remove(_name);
                 else
@@ -75,6 +76,7 @@ namespace FluentIL.Resolvers
         {
             if (disposing)
             {
+                // Deduplicate entries and make repeated disposal harmless.
                 var assemblies = new HashSet<AssemblyDefinition>(_cache.Values);
                 _cache.Clear();
                 foreach (var assembly in assemblies)

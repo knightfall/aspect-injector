@@ -13,7 +13,7 @@ namespace AspectInjector.Core.Services
 {
     public class AspectReader : IAspectReader
     {
-        private readonly ConcurrentDictionary<TypeDefinition, AspectDefinition> _cache = new ConcurrentDictionary<TypeDefinition, AspectDefinition>();
+        private static readonly ConcurrentDictionary<TypeDefinition, AspectDefinition> _cache = new ConcurrentDictionary<TypeDefinition, AspectDefinition>();
 
         private readonly IEnumerable<IEffectReader> _effectExtractors;
         private readonly ILogger _log;
