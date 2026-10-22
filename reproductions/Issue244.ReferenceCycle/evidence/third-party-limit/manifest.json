@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "scope": "Astra P2: transitive dependency back-references bypass target ownership",
+  "resolver_profile": "external",
+  "recorded_at_utc": "2026-10-22T20:01:26.9792566\u002B00:00",
+  "platform": "Debian GNU/Linux 13 (trixie)",
+  "runner_runtime": ".NET 10.0.13",
+  "dotnet_info": ".NET SDK:\n Version:           10.0.402\n Commit:            a8dd0577c5\n Workload version:  10.0.400-manifests.da132f47\n MSBuild version:   18.9.15\u002Ba8dd0577c\n\nRuntime Environment:\n OS Name:     debian\n OS Version:  13\n OS Platform: Linux\n RID:         linux-x64\n Base Path:   /workspace/.dotnet/sdk/10.0.402/\n\n.NET workloads installed:\nThere are no installed workloads to display.\nConfigured to use workload sets when installing new manifests.\nNo workload sets are installed. Run \u0022dotnet workload restore\u0022 to install a workload set.\n\nHost:\n  Version:      10.0.13\n  Architecture: x64\n  Commit:       4099f83977\n\n.NET SDKs installed:\n  8.0.426 [/workspace/.dotnet/sdk]\n  10.0.402 [/workspace/.dotnet/sdk]\n\n.NET runtimes installed:\n  Microsoft.AspNetCore.App 8.0.32 [/workspace/.dotnet/shared/Microsoft.AspNetCore.App]\n  Microsoft.AspNetCore.App 10.0.13 [/workspace/.dotnet/shared/Microsoft.AspNetCore.App]\n  Microsoft.NETCore.App 6.0.36 [/workspace/.dotnet/shared/Microsoft.NETCore.App]\n  Microsoft.NETCore.App 8.0.32 [/workspace/.dotnet/shared/Microsoft.NETCore.App]\n  Microsoft.NETCore.App 10.0.13 [/workspace/.dotnet/shared/Microsoft.NETCore.App]\n\nOther architectures found:\n  None\n\nEnvironment variables:\n  DOTNET_CLI_HOME                          [/workspace/.dotnet-home]\n  DOTNET_HOST_PATH                         [/workspace/.dotnet/dotnet]\n  DOTNET_ROOT                              [/workspace/.dotnet]\n  DOTNET_ROOT_X64                          [/workspace/.dotnet]\n\nglobal.json file:\n  /workspace/aspect-injector/global.json\n\nLearn more:\n  https://aka.ms/dotnet/info\n\nDownload .NET:\n  https://aka.ms/dotnet/download",
+  "harness_source_sha256": "f22524e03e5a6574b5b700f569fa9c4c8e8ffee0ce05a8db97de3aff12855bc6",
+  "harness_project_sha256": "642d5dc86b54a480898bf5b9567c387791666c257e07c927e788b97a4b231b0c",
+  "runner_sha256": "d47a563ee261c301c9e6dcfd3acdf868f1ded5971fef2a6e34a0d4af7b1da46a",
+  "revisions": {
+    "baseline": {
+      "commit": "fb24e3ce40b99e15d2af3cd40e0f0821ddafa197",
+      "source_sha256": {
+        "src/FluentIL/PatcherBase.cs": "0fe1a7c2d4cbb585eb6f19c5d0e711dcfd3d5f325aa8c2e61240c95754ed7f6a",
+        "src/FluentIL/Resolvers/CachedAssemblyResolver.cs": "db87e70614751ddb39f4d97e906cbf07e9f5f1c0d158611659e52abd9a633863",
+        "src/FluentIL/Resolvers/KnownReferencesAssemblyResolver.cs": "8ddc2be00c3f2e2c74e0fc772eccf3c33d5ddb991abbf235ebdf3f404f6749d3",
+        "src/FluentIL/Resolvers/TargetAssemblyResolver.cs": null
+      },
+      "probe_binary_sha256": "fbd4eeaf81e009169d3934b6da18ef338aaf9aa4acbb5b816b004c5bc1e27774",
+      "build_command": [
+        "/workspace/.dotnet/dotnet",
+        "build",
+        "/workspace/aspect-injector/reproductions/Issue244.ReferenceCycle/ReferenceCycleProof.csproj",
+        "-c",
+        "Release",
+        "--artifacts-path",
+        "/tmp/aspect-injector-cycle-proof-NlgHue/baseline-build",
+        "--disable-build-servers",
+        "-p:ReproRepository=/tmp/aspect-injector-cycle-proof-NlgHue/baseline-source",
+        "-v:minimal"
+      ]
+    },
+    "candidate": {
+      "commit": "159da826cc1f6f12ae2da3c5573d1de38b4769a8",
+      "source_sha256": {
+        "src/FluentIL/PatcherBase.cs": "007f833feb0f5aece129d5116f32f3d666146ae43b0fdb7a37c003728ab94f2b",
+        "src/FluentIL/Resolvers/CachedAssemblyResolver.cs": "0330f0bc5bd5edaafb61436e09c8cd29c333dbadac752cbde12ae3f1aac621f6",
+        "src/FluentIL/Resolvers/KnownReferencesAssemblyResolver.cs": "8ddc2be00c3f2e2c74e0fc772eccf3c33d5ddb991abbf235ebdf3f404f6749d3",
+        "src/FluentIL/Resolvers/TargetAssemblyResolver.cs": "7ba6adcd2b2cbe762202c7191d5ed01a4efdb7a0dd89a869a80bc6815a977691"
+      },
+      "probe_binary_sha256": "014ccfb4f310dbafd26be9b15881f952268b626b1515b2d6c1c4d4e47110da88",
+      "build_command": [
+        "/workspace/.dotnet/dotnet",
+        "build",
+        "/workspace/aspect-injector/reproductions/Issue244.ReferenceCycle/ReferenceCycleProof.csproj",
+        "-c",
+        "Release",
+        "--artifacts-path",
+        "/tmp/aspect-injector-cycle-proof-NlgHue/candidate-build",
+        "--disable-build-servers",
+        "-p:ReproRepository=/tmp/aspect-injector-cycle-proof-NlgHue/candidate-source",
+        "-v:minimal"
+      ]
+    },
+    "fixed": {
+      "commit": "627966b299595db7ff2b775709bb575b7d36913a",
+      "source_sha256": {
+        "src/FluentIL/PatcherBase.cs": "007f833feb0f5aece129d5116f32f3d666146ae43b0fdb7a37c003728ab94f2b",
+        "src/FluentIL/Resolvers/CachedAssemblyResolver.cs": "b249fa755107adf403f11c5ae1f8db159321bae0c77ab125626de7ded55ecd2e",
+        "src/FluentIL/Resolvers/KnownReferencesAssemblyResolver.cs": "8ddc2be00c3f2e2c74e0fc772eccf3c33d5ddb991abbf235ebdf3f404f6749d3",
+        "src/FluentIL/Resolvers/TargetAssemblyResolver.cs": "70e9d4f4e13eec6798f10276a48d3a6f85e1bbb1e56c6b062d5ffd2ac075be40"
+      },
+      "probe_binary_sha256": "5b917f6ae71091176e8bde31ee132e8718f3d0ae6333b9c5052c07b50a257775",
+      "build_command": [
+        "/workspace/.dotnet/dotnet",
+        "build",
+        "/workspace/aspect-injector/reproductions/Issue244.ReferenceCycle/ReferenceCycleProof.csproj",
+        "-c",
+        "Release",
+        "--artifacts-path",
+        "/tmp/aspect-injector-cycle-proof-NlgHue/fixed-build",
+        "--disable-build-servers",
+        "-p:ReproRepository=/tmp/aspect-injector-cycle-proof-NlgHue/fixed-source",
+        "-v:minimal"
+      ]
+    }
+  }
+}

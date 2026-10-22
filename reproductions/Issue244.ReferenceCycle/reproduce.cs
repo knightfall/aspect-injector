@@ -31,13 +31,14 @@ internal static class Reproduction
             ["--baseline"] = Baseline,
             ["--candidate"] = Candidate,
             ["--fixed"] = "",
+            ["--resolver"] = "known",
             ["--dotnet"] = "dotnet",
             ["--output"] = Path.Combine(Repository, "artifacts/reference-cycle-proof")
         };
         if (arguments.Contains("--help"))
         {
             Console.WriteLine("Compare immutable revisions and check the reference-cycle counterexample.\n" +
-                "Options: --baseline COMMIT --candidate COMMIT [--fixed COMMIT] --dotnet PATH --output DIRECTORY");
+                "Options: --baseline COMMIT --candidate COMMIT [--fixed COMMIT] [--resolver known|external] --dotnet PATH --output DIRECTORY");
             return 0;
         }
 
@@ -49,6 +50,8 @@ internal static class Reproduction
                     throw new ArgumentException($"Unknown option or missing value: {arguments[index]}");
                 options[arguments[index]] = arguments[index + 1];
             }
+            if (options["--resolver"] is not ("known" or "external"))
+                throw new ArgumentException("--resolver must be known or external.");
             return await Collect(options);
         }
         catch (Exception exception)
@@ -67,6 +70,7 @@ internal static class Reproduction
         {
             schema = 1,
             scope = "Astra P2: transitive dependency back-references bypass target ownership",
+            resolver_profile = options["--resolver"],
             recorded_at_utc = DateTimeOffset.UtcNow.ToString("O"),
             platform = RuntimeInformation.OSDescription,
             runner_runtime = RuntimeInformation.FrameworkDescription,
@@ -113,7 +117,7 @@ internal static class Reproduction
                 if (binaries.Length != 1)
                     throw new InvalidOperationException($"Expected one probe binary, found {binaries.Length}.");
                 await Command(options["--dotnet"],
-                    [binaries[0], commit, Path.Combine(work, label + "-cases"), destination],
+                    [binaries[0], commit, Path.Combine(work, label + "-cases"), destination, options["--resolver"]],
                     Path.Combine(destination, "events.jsonl"));
                 observations[label] = JsonNode.Parse(await File.ReadAllTextAsync(Path.Combine(destination, "observations.json")))!;
                 revisions[label] = new

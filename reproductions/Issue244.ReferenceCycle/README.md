@@ -119,3 +119,37 @@ would miss the Linux duplicate-instance defect.
 The existing historical evidence directories above remain unchanged. New
 [before/after proof and test logs](evidence/fix-verification/README.md) record
 verification of the fix and a negative control that rejects the buggy revision.
+
+## Remaining third-party resolver finding
+
+The fix covers `CachedAssemblyResolver` and its subclasses, including the normal
+MSBuild `KnownReferencesAssemblyResolver`. Astra's follow-up review found a
+remaining case with an external resolver that inherits Cecil's
+`DefaultAssemblyResolver` and caches **both** `Resolve` overloads. This differs
+from plain `DefaultAssemblyResolver`, whose parameterized reads are uncached.
+The external cache succeeds on the original baseline, but current cycle
+back-references still bypass the scoped registration. Existing non-cycle tests
+of external caching resolver reuse do not cover this cycle behavior.
+
+The collector includes this resolver as an explicit profile:
+
+```sh
+dotnet run --file reproductions/Issue244.ReferenceCycle/reproduce.cs -- --resolver external --fixed HEAD --output artifacts/reference-cycle-external-limit
+```
+
+This currently exits **1**, with `REGRESSION_REPRODUCED=true` and
+`FIX_VERIFIED=false`. The [captured Linux counterexample](evidence/third-party-limit/proof.md)
+uses the same immutable baseline, reviewed, and fixed snapshots. The fixed
+snapshot fails F5, F6, F7, and F9: a duplicate target is loaded, and the borrowed
+cache retains its handle. This external-profile capture is Linux evidence;
+the successful Windows fix evidence uses the default project resolver profile.
+
+There is no transparent repair for arbitrary preloaded dependency modules through
+`IAssemblyResolver` alone: cache hits can ignore new reader parameters, Cecil's
+module resolvers have no public setters, and the interface offers no cache
+registration, eviction, or dependency ownership protocol. Disposing or replacing
+caller-owned definitions would violate the borrowed resolver contract. A broader
+solution needs an explicit target-registration capability implemented by the
+external resolver, or a routing wrapper installed before dependencies are loaded
+with defined ownership rules. Until then, use the project's resolver hierarchy
+for cyclic graphs. The PR does not claim that the external case is fixed.

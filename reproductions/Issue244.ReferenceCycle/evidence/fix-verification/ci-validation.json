@@ -1,0 +1,17 @@
+{
+  "source_commit": "49de0f440f2da62e66137426a046d869e3de7795",
+  "implementation_commit": "627966b299595db7ff2b775709bb575b7d36913a",
+  "application_run": "https://github.com/knightfall/aspect-injector/actions/runs/39843422528/attempts/2",
+  "windows_successful_job": 120055429865,
+  "linux_successful_job": 120055433809,
+  "validated_frameworks": ["net6.0", "net8.0", "net10.0"],
+  "build_tests_per_net8_net10": {"passed": 35, "failed": 0},
+  "proof_run": "https://github.com/knightfall/aspect-injector/actions/runs/39843422361",
+  "first_windows_attempt": {
+    "job": 120050275554,
+    "build_tests_passed": 35,
+    "failed_test": "AspectInjector.Tests.Runtime.Around.Global_Tests.AdviceAround_Methods",
+    "observation": "Event ordering failure after an async-void helper's fixed 300 ms wait; complete Windows job passed when retried at the same source commit.",
+    "excerpt": "tests/windows-first-attempt.txt"
+  }
+}

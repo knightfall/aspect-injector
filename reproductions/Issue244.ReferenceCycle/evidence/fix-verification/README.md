@@ -12,6 +12,22 @@ borrowed resolvers. The manifests identify sources, binaries, fixture bytes,
 runtime, and build commands. Historical evidence in `../linux` and `../windows`
 is preserved unchanged.
 
+The [Windows proof](windows/proof.md) checks the same three snapshots. All 10
+historical propositions and all 8 fix propositions pass: the reviewed snapshot
+throws sharing violation `0x80070020` for both ownership modes, while the fixed
+snapshot completes, resolves back-references to the active target, performs no
+duplicate target load, and immediately releases target handles. This run used
+commit `49de0f440f2da62e66137426a046d869e3de7795`, which adds Linux evidence to
+the implementation commit above. The [CI provenance](windows/ci-source.json)
+records the job, source commit, artifact, and verified archive digest.
+
+Full Windows and Linux Release CI passed the .NET 6, .NET 8, and .NET 10
+suites at the same source commit. The [CI record](ci-validation.json) links the
+runs. The first Windows attempt passed all 35 build tests but failed the older
+`AdviceAround_Methods` runtime event-order test; a retry passed without source
+changes. Its helper waits a fixed 300 ms for an async-void body that delays
+200 ms. The [failure excerpt](tests/windows-first-attempt.txt) is preserved.
+
 ## Regression tests
 
 The new `ReferenceCycleTests.cs` has SHA-256
@@ -41,3 +57,10 @@ code 1 and `FIX_VERIFIED=false`. F5, F6, F7, and F9 fail, as expected. See the
 
 This is execution evidence for the recorded fixtures and environments, rather
 than a proof of correctness for every assembly graph or custom resolver.
+
+Astra's follow-up review confirms the project-resolver fix but identifies a
+remaining third-party caching resolver case. Its independent three-snapshot
+[counterexample](../third-party-limit/proof.md) intentionally reports
+`FIX_VERIFIED=false`; the [reproduction instructions](../../README.md#remaining-third-party-resolver-finding)
+describe the API boundary and required extension. This case is not included in
+the successful default-profile fix claim above.

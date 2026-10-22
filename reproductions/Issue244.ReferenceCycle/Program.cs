@@ -27,6 +27,7 @@ internal static class Program
         var revision = args[0];
         var work = Path.GetFullPath(args[1]);
         var output = Path.GetFullPath(args[2]);
+        var external = args.Length > 3 && args[3] == "external";
         Directory.CreateDirectory(work);
         Directory.CreateDirectory(output);
         Emit("environment", new
@@ -37,9 +38,9 @@ internal static class Program
             fluentil_sha256 = Hash(typeof(PatcherBase).Assembly.Location)
         });
         var results = new List<Observation>();
-        results.Add(RunCase(work, "control-borrowed", cycle: false, owned: false));
-        results.Add(RunCase(work, "cycle-borrowed", cycle: true, owned: false));
-        results.Add(RunCase(work, "cycle-owned", cycle: true, owned: true));
+        results.Add(RunCase(work, "control-borrowed", cycle: false, owned: false, external));
+        results.Add(RunCase(work, "cycle-borrowed", cycle: true, owned: false, external));
+        results.Add(RunCase(work, "cycle-owned", cycle: true, owned: true, external));
         File.WriteAllText(Path.Combine(output, "observations.json"), JsonSerializer.Serialize(new
         {
             schema = 1, revision, os = RuntimeInformation.OSDescription,
@@ -49,7 +50,7 @@ internal static class Program
         }, JsonOptions));
     }
 
-    private static Observation RunCase(string work, string name, bool cycle, bool owned)
+    private static Observation RunCase(string work, string name, bool cycle, bool owned, bool external)
     {
         var directory = Path.Combine(work, name);
         Directory.CreateDirectory(directory);
@@ -64,7 +65,7 @@ internal static class Program
             before = ExclusiveOpen(targetPath), target_fds_before = TargetFileDescriptors(targetPath)
         };
         Emit("case.begin", result);
-        var resolver = new RecordingResolver(name);
+        IRecordingResolver resolver = external ? new ExternalCachingResolver(name) : new RecordingResolver(name);
         resolver.AddSearchDirectory(directory);
         resolver.AddReference(dependencyPath);
         var patcher = new RecordingPatcher(name, resolver, result);
@@ -178,7 +179,7 @@ internal static class Program
     private static void Emit(string name, object data)
         => Console.WriteLine(JsonSerializer.Serialize(new { seq = ++_sequence, @event = name, data }));
 
-    private sealed class RecordingPatcher(string name, RecordingResolver resolver, Observation observation) : PatcherBase(new QuietLogger())
+    private sealed class RecordingPatcher(string name, IRecordingResolver resolver, Observation observation) : PatcherBase(new QuietLogger())
     {
         protected override Rule GenericInfoRule => null;
         protected override Rule GenericErrorRule => null;
@@ -222,7 +223,16 @@ internal static class Program
         }
     }
 
-    private sealed class RecordingResolver(string name) : KnownReferencesAssemblyResolver
+    private interface IRecordingResolver : IAssemblyResolver
+    {
+        List<AssemblyDefinition> Loaded { get; }
+        List<Lookup> Lookups { get; }
+        int DisposeCount { get; }
+        void AddSearchDirectory(string directory);
+        void AddReference(string path);
+    }
+
+    private sealed class RecordingResolver(string name) : KnownReferencesAssemblyResolver, IRecordingResolver
     {
         public List<AssemblyDefinition> Loaded { get; } = new();
         public List<Lookup> Lookups { get; } = new();
@@ -253,6 +263,54 @@ internal static class Program
         {
             DisposeCount++;
             Emit("underlying.dispose", new { name, disposing, count = DisposeCount });
+            base.Dispose(disposing);
+        }
+    }
+
+    // Models an opaque caller cache that worked on the baseline. It intentionally
+    // offers only Cecil's public IAssemblyResolver contract, without target registration.
+    private sealed class ExternalCachingResolver(string name) : DefaultAssemblyResolver, IRecordingResolver
+    {
+        private readonly Dictionary<string, AssemblyDefinition> _cache = new();
+        public List<AssemblyDefinition> Loaded { get; } = new();
+        public List<Lookup> Lookups { get; } = new();
+        public int DisposeCount { get; private set; }
+        public void AddReference(string path) { } // Both fixtures are in the configured search directory.
+        public override AssemblyDefinition Resolve(AssemblyNameReference assemblyName)
+            => Resolve(assemblyName, new ReaderParameters());
+
+        public override AssemblyDefinition Resolve(AssemblyNameReference assemblyName, ReaderParameters parameters)
+        {
+            if (_cache.TryGetValue(assemblyName.FullName, out var cached)) return cached;
+            var lookup = new Lookup { assembly_name = assemblyName.Name, read_write = parameters.ReadWrite };
+            Lookups.Add(lookup);
+            Emit("underlying.lookup.begin", new { name, lookup.assembly_name, lookup.read_write });
+            try
+            {
+                var assembly = base.Resolve(assemblyName, parameters);
+                _cache[assemblyName.FullName] = assembly;
+                Loaded.Add(assembly);
+                lookup.returned_id = RuntimeHelpers.GetHashCode(assembly);
+                Emit("underlying.lookup.end", new { name, lookup.assembly_name, lookup.returned_id });
+                return assembly;
+            }
+            catch (Exception exception)
+            {
+                lookup.error = Describe(exception);
+                Emit("underlying.lookup.exception", new { name, lookup.assembly_name, lookup.error });
+                throw;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            DisposeCount++;
+            Emit("underlying.dispose", new { name, disposing, count = DisposeCount });
+            if (disposing)
+            {
+                foreach (var assembly in _cache.Values) assembly.Dispose();
+                _cache.Clear();
+            }
             base.Dispose(disposing);
         }
     }
