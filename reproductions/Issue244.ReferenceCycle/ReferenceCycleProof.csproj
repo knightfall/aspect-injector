@@ -9,5 +9,6 @@
   <ItemGroup>
     <Compile Remove="reproduce.cs" />
     <ProjectReference Include="$(ReproRepository)/src/FluentIL/FluentIL.csproj" />
+    <ProjectReference Include="$(ReproRepository)/src/FluentIL.Common/FluentIL.Common.csproj" />
   </ItemGroup>
 </Project>

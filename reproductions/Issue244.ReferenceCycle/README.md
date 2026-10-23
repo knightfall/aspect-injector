@@ -56,8 +56,9 @@ Captured runs are checked in under [evidence/linux](evidence/linux/proof.md) and
 its [provenance record](evidence/windows/ci-source.json) identifies the commit,
 job, artifact, and verified archive digest.
 The [reproduction workflow](../../.github/workflows/reference-cycle-proof.yml)
-runs the same collector on Windows and Linux and uploads all evidence as
-`reference-cycle-proof-Windows` and `reference-cycle-proof-Linux` artifacts.
+is manually triggered and runs the same collector on Windows, Linux, and macOS.
+It uploads evidence as `reference-cycle-proof-Windows`,
+`reference-cycle-proof-Linux`, and `reference-cycle-proof-macOS` artifacts.
 
 ## Proof obligations
 
