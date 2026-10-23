@@ -8,7 +8,6 @@ on:
   pull_request:
 
 env:
-  app_release: false
   app_conf: Release
   nuget_url: https://api.nuget.org/v3/index.json
 
@@ -35,11 +34,6 @@ jobs:
             10.0.x
       - name: Get version
         run: echo "app_version=$(git describe --tags --abbrev=0 2>/dev/null || echo 0.0.0)" >> "$GITHUB_ENV"
-      - name: Get release status
-        run: |
-          if git describe --tags --exact-match >/dev/null 2>&1; then
-            echo "app_release=true" >> "$GITHUB_ENV"
-          fi
       - name: Compile
         run: dotnet build -c "$app_conf" -p:Version="$app_version" -p:InformationalVersion="$app_version:$GITHUB_SHA"
       - name: Test .NET 6 runtime
@@ -58,8 +52,20 @@ jobs:
         with:
           name: artifacts
           path: ./artifacts
+  publish:
+    name: Publish NuGet packages
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: artifacts
+          path: artifacts
       - name: Publish
-        if: runner.os == 'Linux' && env.app_release == 'true'
         env:
           NUGETKEY: ${{ secrets.NUGET_KEY }}
         working-directory: artifacts
