@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "scope": "Astra P2: transitive dependency back-references bypass target ownership",
+  "recorded_at_utc": "2026-10-22T19:49:53.3594063\u002B00:00",
+  "platform": "Microsoft Windows 10.0.26100",
+  "runner_runtime": ".NET 10.0.13",
+  "dotnet_info": ".NET SDK:\r\n Version:           10.0.402\r\n Commit:            a8dd0577c5\r\n Workload version:  10.0.400-manifests.6055ec36\r\n MSBuild version:   18.9.15\u002Ba8dd0577c\r\n\r\nRuntime Environment:\r\n OS Name:     Windows\r\n OS Version:  10.0.26100\r\n OS Platform: Windows\r\n RID:         win-x64\r\n Base Path:   C:\\Program Files\\dotnet\\sdk\\10.0.402\\\r\n\r\n.NET workloads installed:\r\n [maui-windows]\r\n   Installation Source: VS 18.11.12306.390\r\n   Manifest Version:    10.0.110/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maui\\10.0.110\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [maccatalyst]\r\n   Installation Source: VS 18.11.12306.390\r\n   Manifest Version:    26.5.10315/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maccatalyst\\26.5.10315\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [ios]\r\n   Installation Source: VS 18.11.12306.390\r\n   Manifest Version:    26.5.10315/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.ios\\26.5.10315\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [android]\r\n   Installation Source: VS 18.11.12306.390\r\n   Manifest Version:    36.1.118/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.android\\36.1.118\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\n [wasm-tools]\r\n   Installation Source: VS 18.11.12306.390\r\n   Manifest Version:    10.0.113/10.0.100\r\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.workload.mono.toolchain.current\\10.0.113\\WorkloadManifest.json\r\n   Install Type:              Msi\r\n\r\nConfigured to use workload sets when installing new manifests.\r\nNo workload sets are installed. Run \u0022dotnet workload restore\u0022 to install a workload set.\r\n\r\nHost:\r\n  Version:      10.0.13\r\n  Architecture: x64\r\n  Commit:       4099f83977\r\n\r\n.NET SDKs installed:\r\n  8.0.132 [C:\\Program Files\\dotnet\\sdk]\r\n  8.0.206 [C:\\Program Files\\dotnet\\sdk]\r\n  8.0.319 [C:\\Program Files\\dotnet\\sdk]\r\n  8.0.426 [C:\\Program Files\\dotnet\\sdk]\r\n  9.0.122 [C:\\Program Files\\dotnet\\sdk]\r\n  9.0.205 [C:\\Program Files\\dotnet\\sdk]\r\n  9.0.319 [C:\\Program Files\\dotnet\\sdk]\r\n  10.0.113 [C:\\Program Files\\dotnet\\sdk]\r\n  10.0.204 [C:\\Program Files\\dotnet\\sdk]\r\n  10.0.303 [C:\\Program Files\\dotnet\\sdk]\r\n  10.0.402 [C:\\Program Files\\dotnet\\sdk]\r\n\r\n.NET runtimes installed:\r\n  Microsoft.AspNetCore.App 8.0.6 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 8.0.22 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 8.0.32 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 9.0.6 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 9.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 10.0.8 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.AspNetCore.App 10.0.13 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\r\n  Microsoft.NETCore.App 8.0.6 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 8.0.22 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 8.0.32 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 9.0.6 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 9.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 10.0.8 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 10.0.13 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.WindowsDesktop.App 8.0.6 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 8.0.22 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 8.0.32 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 9.0.6 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 9.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 10.0.8 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 10.0.13 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n\r\nOther architectures found:\r\n  x86   [C:\\Program Files (x86)\\dotnet]\r\n    registered at [HKLM\\SOFTWARE\\dotnet\\Setup\\InstalledVersions\\x86\\InstallLocation]\r\n\r\nEnvironment variables:\r\n  DOTNET_MULTILEVEL_LOOKUP                 [0]\r\n  DOTNET_NOLOGO                            [1]\r\n  DOTNET_ROOT                              [C:\\Program Files\\dotnet]\r\n  DOTNET_ROOT_X64                          [C:\\Program Files\\dotnet]\r\n  DOTNET_SKIP_FIRST_TIME_EXPERIENCE        [1]\r\n\r\nglobal.json file:\r\n  D:\\a\\aspect-injector\\aspect-injector\\global.json\r\n\r\nLearn more:\r\n  https://aka.ms/dotnet/info\r\n\r\nDownload .NET:\r\n  https://aka.ms/dotnet/download",
+  "harness_source_sha256": "6f03762ad7f91ff2e202787f37f9c99121d865c90b924aac6594b69b0beac801",
+  "harness_project_sha256": "642d5dc86b54a480898bf5b9567c387791666c257e07c927e788b97a4b231b0c",
+  "runner_sha256": "34a4cf1527b3a637fd4355ec6b99d313bd5296a1cd451edddebcd3de32ed428e",
+  "revisions": {
+    "baseline": {
+      "commit": "fb24e3ce40b99e15d2af3cd40e0f0821ddafa197",
+      "source_sha256": {
+        "src/FluentIL/PatcherBase.cs": "0fe1a7c2d4cbb585eb6f19c5d0e711dcfd3d5f325aa8c2e61240c95754ed7f6a",
+        "src/FluentIL/Resolvers/CachedAssemblyResolver.cs": "db87e70614751ddb39f4d97e906cbf07e9f5f1c0d158611659e52abd9a633863",
+        "src/FluentIL/Resolvers/KnownReferencesAssemblyResolver.cs": "8ddc2be00c3f2e2c74e0fc772eccf3c33d5ddb991abbf235ebdf3f404f6749d3",
+        "src/FluentIL/Resolvers/TargetAssemblyResolver.cs": null
+      },
+      "probe_binary_sha256": "82ba3ecf629af621f4c56a84c1832e54f88414651a647eb91b3dcb06ced78dc4",
+      "build_command": [
+        "dotnet",
+        "build",
+        "D:\\a\\aspect-injector\\aspect-injector\\reproductions\\Issue244.ReferenceCycle\\ReferenceCycleProof.csproj",
+        "-c",
+        "Release",
+        "--artifacts-path",
+        "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\aspect-injector-cycle-proof-maxida0v.mz5\\baseline-build",
+        "--disable-build-servers",
+        "-p:ReproRepository=C:\\Users\\runneradmin\\AppData\\Local\\Temp\\aspect-injector-cycle-proof-maxida0v.mz5\\baseline-source",
+        "-v:minimal"
+      ]
+    },
+    "candidate": {
+      "commit": "159da826cc1f6f12ae2da3c5573d1de38b4769a8",
+      "source_sha256": {
+        "src/FluentIL/PatcherBase.cs": "007f833feb0f5aece129d5116f32f3d666146ae43b0fdb7a37c003728ab94f2b",
+        "src/FluentIL/Resolvers/CachedAssemblyResolver.cs": "0330f0bc5bd5edaafb61436e09c8cd29c333dbadac752cbde12ae3f1aac621f6",
+        "src/FluentIL/Resolvers/KnownReferencesAssemblyResolver.cs": "8ddc2be00c3f2e2c74e0fc772eccf3c33d5ddb991abbf235ebdf3f404f6749d3",
+        "src/FluentIL/Resolvers/TargetAssemblyResolver.cs": "7ba6adcd2b2cbe762202c7191d5ed01a4efdb7a0dd89a869a80bc6815a977691"
+      },
+      "probe_binary_sha256": "04a544ffa6f117c0d9784fc2493ca06dc70d79529270f35b34aeb7c69d0c7d2b",
+      "build_command": [
+        "dotnet",
+        "build",
+        "D:\\a\\aspect-injector\\aspect-injector\\reproductions\\Issue244.ReferenceCycle\\ReferenceCycleProof.csproj",
+        "-c",
+        "Release",
+        "--artifacts-path",
+        "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\aspect-injector-cycle-proof-maxida0v.mz5\\candidate-build",
+        "--disable-build-servers",
+        "-p:ReproRepository=C:\\Users\\runneradmin\\AppData\\Local\\Temp\\aspect-injector-cycle-proof-maxida0v.mz5\\candidate-source",
+        "-v:minimal"
+      ]
+    },
+    "fixed": {
+      "commit": "49de0f440f2da62e66137426a046d869e3de7795",
+      "source_sha256": {
+        "src/FluentIL/PatcherBase.cs": "007f833feb0f5aece129d5116f32f3d666146ae43b0fdb7a37c003728ab94f2b",
+        "src/FluentIL/Resolvers/CachedAssemblyResolver.cs": "b249fa755107adf403f11c5ae1f8db159321bae0c77ab125626de7ded55ecd2e",
+        "src/FluentIL/Resolvers/KnownReferencesAssemblyResolver.cs": "8ddc2be00c3f2e2c74e0fc772eccf3c33d5ddb991abbf235ebdf3f404f6749d3",
+        "src/FluentIL/Resolvers/TargetAssemblyResolver.cs": "70e9d4f4e13eec6798f10276a48d3a6f85e1bbb1e56c6b062d5ffd2ac075be40"
+      },
+      "probe_binary_sha256": "77ed8a6337ab60add5da7226a46e5545604aa52392eab939cd4b9081c43422ab",
+      "build_command": [
+        "dotnet",
+        "build",
+        "D:\\a\\aspect-injector\\aspect-injector\\reproductions\\Issue244.ReferenceCycle\\ReferenceCycleProof.csproj",
+        "-c",
+        "Release",
+        "--artifacts-path",
+        "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\aspect-injector-cycle-proof-maxida0v.mz5\\fixed-build",
+        "--disable-build-servers",
+        "-p:ReproRepository=C:\\Users\\runneradmin\\AppData\\Local\\Temp\\aspect-injector-cycle-proof-maxida0v.mz5\\fixed-source",
+        "-v:minimal"
+      ]
+    }
+  }
+}

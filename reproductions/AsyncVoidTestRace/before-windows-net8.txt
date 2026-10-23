@@ -1,0 +1,35 @@
+2026-10-22T21:05:40.9621666Z [xUnit.net 00:00:12.11]     AspectInjector.Tests.Runtime.Around.Instance_Tests.AdviceAround_Methods [FAIL]
+2026-10-22T21:05:40.9622965Z   Failed AspectInjector.Tests.Runtime.Around.Instance_Tests.AdviceAround_Methods [2 s]
+2026-10-22T21:05:40.9657795Z   Error Message:
+2026-10-22T21:05:40.9658975Z    AroundAspectInstanceEnter
+2026-10-22T21:05:40.9666345Z FactEnter
+2026-10-22T21:05:40.9667088Z FactExit
+2026-10-22T21:05:40.9667716Z AroundAspectInstanceExit
+2026-10-22T21:05:40.9668924Z AroundAspectInstanceEnter
+2026-10-22T21:05:40.9670100Z AroundAspectInstanceExit
+2026-10-22T21:05:40.9670875Z TestIteratorMethodExit
+2026-10-22T21:05:40.9671645Z AroundAspectInstanceEnter
+2026-10-22T21:05:40.9672360Z AroundAspectInstanceExit
+2026-10-22T21:05:40.9673135Z AroundAspectInstanceEnter
+2026-10-22T21:05:40.9673865Z AroundAspectInstanceExit
+2026-10-22T21:05:40.9674947Z TestAsyncMethodExit
+2026-10-22T21:05:40.9675708Z TestAsyncMethodExit
+2026-10-22T21:05:40.9676447Z AroundAspectInstanceEnter
+2026-10-22T21:05:40.9677597Z AroundAspectInstanceExit
+2026-10-22T21:05:40.9678804Z TestAsyncMethodExit
+2026-10-22T21:05:40.9679570Z   Stack Trace:
+2026-10-22T21:05:40.9686243Z      at AspectInjector.Tests.Runtime.TestRunner.CheckSequence(IReadOnlyList`1 orderedEvents) in D:\a\aspect-injector\aspect-injector\tests\AspectInjector.Tests.Runtime\TestRunner.cs:line 258
+2026-10-22T21:05:40.9691719Z    at AspectInjector.Tests.Runtime.Around.Global_Tests.AdviceAround_Methods() in D:\a\aspect-injector\aspect-injector\tests\AspectInjector.Tests.Runtime\Around\TargetsGlobalTests.cs:line 141
+2026-10-22T21:05:40.9699670Z    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+2026-10-22T21:05:40.9751342Z    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+2026-10-22T21:05:44.1804438Z
+2026-10-22T21:05:44.1819720Z Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21, Duration: 12 s - Aspects.Tests.dll (net8.0)
+2026-10-22T21:05:44.6757825Z
+2026-10-22T21:05:44.6803039Z Failed!  - Failed:     1, Passed:   155, Skipped:     0, Total:   156, Duration: 15 s - AspectInjector.Tests.Runtime.dll (net8.0)
+2026-10-22T21:05:55.8776849Z
+2026-10-22T21:05:55.8821025Z Passed!  - Failed:     0, Passed:    31, Skipped:     0, Total:    31, Duration: 21 s - AspectInjector.Tests.Build.dll (net8.0)
+2026-10-22T21:05:56.2165050Z ##[error]Process completed with exit code 1.
+2026-10-22T21:05:56.2491101Z Post job cleanup.
+2026-10-22T21:05:56.4584247Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-22T21:05:56.4930035Z git version 2.56.0.windows.2
+2026-10-22T21:05:56.4993793Z Temporarily overriding HOME='D:\a\_temp\fd489662-e27d-43ed-9ab1-43509a7ea7c2' before making global git config changes

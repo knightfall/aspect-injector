@@ -1,0 +1,48 @@
+{
+  "sourceCommit": "1b248098100f2d9e8201460201827dbb3f843e9b",
+  "application": {
+    "url": "https://github.com/knightfall/aspect-injector/actions/runs/39853353837",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 120085066173,
+        "name": "build (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/knightfall/aspect-injector/actions/runs/39853353837/job/120085066173"
+      },
+      {
+        "id": 120085066239,
+        "name": "build (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/knightfall/aspect-injector/actions/runs/39853353837/job/120085066239"
+      }
+    ]
+  },
+  "proof": {
+    "url": "https://github.com/knightfall/aspect-injector/actions/runs/39853353976",
+    "conclusion": "success",
+    "windows": {
+      "jobId": 120085065301,
+      "artifactId": 12459220594,
+      "artifactName": "reference-cycle-proof-Windows",
+      "artifactSha256": "9c55bcd0d952481465ca630402db1453cb8c83396799d65f4e3a97d5024750b1",
+      "archiveDigestVerified": true,
+      "checkedAssertions": 18
+    },
+    "linux": {
+      "jobId": 120085065891,
+      "checkedAssertions": 21
+    }
+  },
+  "deferredBranch": "followup/compilation-state-lifetime",
+  "deferredCommit": "4ba90bc1a2fabb9c73e53ebed9f2dd03ed4508c7",
+  "buildTestCases": {
+    "active": 31,
+    "deferred": 35
+  },
+  "limits": [
+    "Proof assertions apply to the recorded fixtures and supported project resolvers.",
+    "The third-party caching resolver counterexample remains open.",
+    "The deferred cache and callback work has no performance or general concurrency proof."
+  ]
+}
