@@ -19,10 +19,12 @@ namespace FluentIL
 
         public void Process(string assemblyFile, IReadOnlyList<string> references, bool optimize, bool verbose)
         {
-            var resolver = GetResolver(assemblyFile, references);
-            if (_log.IsErrorThrown) return;
-
-            Process(assemblyFile, resolver, optimize, verbose);
+            // This overload owns the resolver and its cached dependencies.
+            using (var resolver = GetResolver(assemblyFile, references))
+            {
+                if (_log.IsErrorThrown) return;
+                Process(assemblyFile, resolver, optimize, verbose);
+            }
         }
 
         public void Process(string assemblyFile, IAssemblyResolver resolver, bool optimize, bool verbose)
@@ -36,18 +38,24 @@ namespace FluentIL
             if (verbose) _log.Log(GenericInfoRule, $"Started for {Path.GetFileName(assemblyFile)}");
 
             var pdbPresent = AreSymbolsFound(assemblyFile);
-            var assembly = ReadAssembly(assemblyFile, resolver, pdbPresent, verbose);
-
-            var modified = PatchAssembly(assembly, optimize, verbose);
-
-            if (!_log.IsErrorThrown)
+            // Close the target and symbols even when weaving is skipped or fails.
+            using (var targetResolver = new TargetAssemblyResolver(resolver))
+            using (var assembly = ReadAssembly(assemblyFile, targetResolver, pdbPresent))
             {
-                if (modified)
+                // Only this operation owns the target; the borrowed resolver supplies dependencies.
+                targetResolver.Target = assembly;
+                if (verbose) _log.Log(GenericInfoRule, "Assembly has been read.");
+                var modified = PatchAssembly(assembly, optimize, verbose);
+
+                if (!_log.IsErrorThrown)
                 {
-                    if (verbose) _log.Log(GenericInfoRule, "Assembly has been patched.");
-                    WriteAssembly(assembly, pdbPresent, verbose);
+                    if (modified)
+                    {
+                        if (verbose) _log.Log(GenericInfoRule, "Assembly has been patched.");
+                        WriteAssembly(assembly, pdbPresent, verbose);
+                    }
+                    else if (verbose) _log.Log(GenericInfoRule, "No patching required.");
                 }
-                else if (verbose) _log.Log(GenericInfoRule, "No patching required.");
             }
         }
 
@@ -67,27 +75,17 @@ namespace FluentIL
             return resolver;
         }
 
-        private AssemblyDefinition ReadAssembly(string assemblyFile, IAssemblyResolver resolver, bool readSymbols,bool verbose)
+        private AssemblyDefinition ReadAssembly(string assemblyFile, IAssemblyResolver resolver, bool readSymbols)
         {
-            var assembly = AssemblyDefinition.ReadAssembly(assemblyFile,
-                new ReaderParameters
-                {
-                    ReadingMode = ReadingMode.Deferred
-                });
-
-            assembly.Dispose();
-
-            assembly = resolver.Resolve(assembly.Name, new ReaderParameters
+            return AssemblyDefinition.ReadAssembly(assemblyFile, new ReaderParameters
             {
-                ReadingMode = ReadingMode.Immediate,
+                // Register the target before resolving its metadata. Cecil materializes deferred
+                // metadata before writing, so rewriting the original stream remains safe.
+                ReadingMode = ReadingMode.Deferred,
                 ReadWrite = true,
                 AssemblyResolver = resolver,
                 ReadSymbols = readSymbols
             });
-
-            if (verbose) _log.Log(GenericInfoRule, "Assembly has been read.");
-
-            return assembly;
         }
 
         private void WriteAssembly(AssemblyDefinition assembly, bool writeSymbols, bool verbose)
@@ -100,11 +98,6 @@ namespace FluentIL
             }
 
             assembly.Write(param);
-
-            if (assembly.MainModule.SymbolReader != null)
-                assembly.MainModule.SymbolReader.Dispose();
-
-            assembly.Dispose();
 
             if (verbose) _log.Log(GenericInfoRule, "Assembly has been written.");
         }

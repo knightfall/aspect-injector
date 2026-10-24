@@ -1,0 +1,112 @@
+{
+  "schema": 2,
+  "regression_reproduced": true,
+  "fix_verified": true,
+  "checks": [
+    {
+      "id": "P1",
+      "proposition": "Both executions use the same Mono.Cecil binary",
+      "passed": true
+    },
+    {
+      "id": "P2",
+      "proposition": "Both revisions receive byte-identical inputs for every corresponding case",
+      "passed": true
+    },
+    {
+      "id": "P3",
+      "proposition": "CLR accepts the non-cyclic inheritance chain, including the assembly-reference cycle",
+      "passed": true
+    },
+    {
+      "id": "P4",
+      "proposition": "Every input DLL can be opened exclusively before processing",
+      "passed": true
+    },
+    {
+      "id": "P5",
+      "proposition": "The control succeeds and releases the target in both revisions",
+      "passed": true
+    },
+    {
+      "id": "P6",
+      "proposition": "The baseline resolves cycle back-references to the operation target and releases its file",
+      "passed": true
+    },
+    {
+      "id": "P7",
+      "proposition": "Candidate dependency modules use the underlying resolver",
+      "passed": true
+    },
+    {
+      "id": "P8",
+      "proposition": "The candidate attempts an extra read-only target load through the underlying resolver",
+      "passed": true
+    },
+    {
+      "id": "P9",
+      "proposition": "During processing, candidate back-references are distinct target instances with confirmed cache hits and no extra I/O",
+      "passed": true
+    },
+    {
+      "id": "P10",
+      "proposition": "The borrowed cache retains the target lock after processing; disposing it releases the lock",
+      "passed": true
+    },
+    {
+      "id": "P11",
+      "proposition": "Owned-resolver cleanup releases the duplicate target after processing",
+      "passed": true
+    },
+    {
+      "id": "P12",
+      "proposition": "Linux independently shows an extra target FD, then zero after cache disposal",
+      "passed": true
+    },
+    {
+      "id": "F1",
+      "proposition": "Fixed and reviewed revisions use the same Mono.Cecil binary",
+      "passed": true
+    },
+    {
+      "id": "F2",
+      "proposition": "Fixed and reviewed revisions receive byte-identical fixture assemblies",
+      "passed": true
+    },
+    {
+      "id": "F3",
+      "proposition": "Every fixed-revision fixture is CLR-valid and initially unlocked",
+      "passed": true
+    },
+    {
+      "id": "F4",
+      "proposition": "Every fixed-revision operation completes and direct self-resolution returns T",
+      "passed": true
+    },
+    {
+      "id": "F5",
+      "proposition": "Fixed cycle back-references resolve to the operation-owned target T",
+      "passed": true
+    },
+    {
+      "id": "F6",
+      "proposition": "The fixed resolver performs zero underlying target loads",
+      "passed": true
+    },
+    {
+      "id": "F7",
+      "proposition": "Every fixed-revision target is unlocked immediately after Process and after resolver disposal",
+      "passed": true
+    },
+    {
+      "id": "F8",
+      "proposition": "Processing disposes owned resolvers once and leaves borrowed resolvers undisposed",
+      "passed": true
+    },
+    {
+      "id": "F9",
+      "proposition": "Linux independently reports zero target FDs after fixed processing",
+      "passed": true
+    }
+  ]
+}

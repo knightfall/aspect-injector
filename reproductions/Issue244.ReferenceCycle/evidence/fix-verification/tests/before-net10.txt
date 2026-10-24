@@ -1,0 +1,217 @@
+Test run for /workspace/aspect-injector/tests/AspectInjector.Tests.Build/bin/Release/net10.0/AspectInjector.Tests.Build.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.52]     AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Throws, preload: False) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Modified, preload: False) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Throws, preload: True) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Unmodified, preload: False) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Unmodified, preload: True) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Modified, preload: True) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: False, outcome: Unmodified) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: True, outcome: Throws) [FAIL]
+[xUnit.net 00:00:00.54]     AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: False, outcome: Modified) [FAIL]
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Throws, preload: False) [103 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is not the exact type
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(Xunit.Sdk.SameException)
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Outcome outcome, Boolean preload) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 86
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Modified, preload: False) [1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass7_0.<BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 84
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Outcome outcome, Boolean preload) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 88
+   at InvokeStub_ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Throws, preload: True) [< 1 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is not the exact type
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(Xunit.Sdk.SameException)
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Outcome outcome, Boolean preload) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 86
+   at InvokeStub_ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Unmodified, preload: False) [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass7_0.<BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 84
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Outcome outcome, Boolean preload) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 88
+   at InvokeStub_ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Unmodified, preload: True) [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass7_0.<BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 84
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Outcome outcome, Boolean preload) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 88
+   at InvokeStub_ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(outcome: Modified, preload: True) [1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass7_0.<BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 84
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Outcome outcome, Boolean preload) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 88
+   at InvokeStub_ReferenceCycleTests.BorrowedCycleDependenciesCanBePreloadedAndReusedWithReplacedTargets(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: False, outcome: Unmodified) [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass6_0.<CycleResolvesTheActiveTargetWithoutOpeningItAgain>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 37
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Boolean owned, Outcome outcome) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: True, outcome: Throws) [< 1 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is not the exact type
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(Xunit.Sdk.SameException)
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Boolean owned, Outcome outcome) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 40
+   at InvokeStub_ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: False, outcome: Modified) [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass6_0.<CycleResolvesTheActiveTargetWithoutOpeningItAgain>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 37
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Boolean owned, Outcome outcome) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 42
+   at InvokeStub_ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.61]     AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: False, outcome: Throws) [FAIL]
+[xUnit.net 00:00:00.61]     AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: True, outcome: Modified) [FAIL]
+[xUnit.net 00:00:00.61]     AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: True, outcome: Unmodified) [FAIL]
+[xUnit.net 00:00:00.61]     AspectInjector.Tests.Build.ReferenceCycleTests.TargetRegistrationDoesNotReplaceAnExistingCallerCacheEntry [FAIL]
+[xUnit.net 00:00:00.61]     AspectInjector.Tests.Build.ReferenceCycleTests.NestedProcessingRestoresTheOuterTargetRegistration [FAIL]
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: False, outcome: Throws) [2 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is not the exact type
+Expected: typeof(System.InvalidOperationException)
+Actual:   typeof(Xunit.Sdk.SameException)
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Boolean owned, Outcome outcome) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 40
+   at InvokeStub_ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: True, outcome: Modified) [6 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at FluentIL.PatcherBase.Process(String assemblyFile, IReadOnlyList`1 references, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 25
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 163
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass6_0.<CycleResolvesTheActiveTargetWithoutOpeningItAgain>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 37
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Boolean owned, Outcome outcome) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 42
+   at InvokeStub_ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(owned: True, outcome: Unmodified) [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   Xunit.Sdk.SameException: Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+   at Xunit.Assert.Same(Object expected, Object actual) in /_/src/xunit.assert/Asserts/IdentityAsserts.cs:line 54
+   at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at FluentIL.PatcherBase.Process(String assemblyFile, IReadOnlyList`1 references, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 25
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 163
+   at AspectInjector.Tests.Build.ReferenceCycleTests.<>c__DisplayClass6_0.<CycleResolvesTheActiveTargetWithoutOpeningItAgain>b__0() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 37
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Boolean owned, Outcome outcome) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 42
+   at InvokeStub_ReferenceCycleTests.CycleResolvesTheActiveTargetWithoutOpeningItAgain(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.TargetRegistrationDoesNotReplaceAnExistingCallerCacheEntry [5 ms]
+  Error Message:
+   Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.TargetRegistrationDoesNotReplaceAnExistingCallerCacheEntry() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 119
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AspectInjector.Tests.Build.ReferenceCycleTests.NestedProcessingRestoresTheOuterTargetRegistration [< 1 ms]
+  Error Message:
+   Assert.Same() Failure: Values are not the same instance
+Expected: Test.Root
+Actual:   Test.Root
+  Stack Trace:
+     at AspectInjector.Tests.Build.ReferenceCycleTests.CyclePatcher.PatchAssembly(AssemblyDefinition target, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 204
+   at FluentIL.PatcherBase.Process(String assemblyFile, IAssemblyResolver resolver, Boolean optimize, Boolean verbose) in /workspace/aspect-injector/src/FluentIL/PatcherBase.cs:line 46
+   at AspectInjector.Tests.Build.ReferenceCycleTests.Process(CyclePatcher patcher, TrackingResolver resolver, Boolean owned) in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 164
+   at AspectInjector.Tests.Build.ReferenceCycleTests.NestedProcessingRestoresTheOuterTargetRegistration() in /workspace/aspect-injector/tests/AspectInjector.Tests.Build/ReferenceCycleTests.cs:line 145
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: /workspace/aspect-injector/artifacts/reference-cycle-tests-before/reference-cycle-before.trx
+
+Failed!  - Failed:    14, Passed:     0, Skipped:     0, Total:    14, Duration: 181 ms - AspectInjector.Tests.Build.dll (net10.0)

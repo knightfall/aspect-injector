@@ -1,5 +1,6 @@
 ﻿using AspectInjector.Broker;
 using Xunit;
+using AspectInjector.Tests.Runtime;
 using System;
 using System.Threading.Tasks;
 
@@ -41,8 +42,7 @@ namespace AspectInjector.Tests.Advices
             Checker.Passed = false;
 
             var a = new AsyncTests_Target();
-            a.Do3();
-            Task.Delay(200).Wait();
+            AsyncVoid.Run(a.Do3);
 
             Assert.True(Checker.Passed);
         }
