@@ -7,10 +7,13 @@ namespace AspectInjector.Tests.Runtime
 {
     internal static class AsyncVoid
     {
+        /// <summary>
+        /// Waits for an async-void operation and rethrows its failure on the caller's thread.
+        /// </summary>
         public static void Run(Action action)
         {
             var previous = SynchronizationContext.Current;
-            // Track async void completion without blocking the runner's context.
+            // Keep continuations off the caller's context while this thread waits.
             var context = new AsyncTestSyncContext(null);
             try
             {

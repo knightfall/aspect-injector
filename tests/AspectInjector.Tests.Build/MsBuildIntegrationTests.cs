@@ -11,6 +11,9 @@ namespace AspectInjector.Tests.Build
 {
     public class MsBuildIntegrationTests
     {
+        /// <summary>
+        /// Verifies real MSBuild integration across clean, incremental, and rebuild operations.
+        /// </summary>
         [Theory]
         [InlineData(false, false)]
         [InlineData(true, false)]
@@ -28,6 +31,7 @@ namespace AspectInjector.Tests.Build
             Directory.CreateDirectory(directory);
             try
             {
+                // Exercise the SDK matching this test target, rather than the parent SDK.
                 File.WriteAllText(Path.Combine(directory, "global.json"), $@"{{""sdk"":{{""version"":""{major}.0.100"",""rollForward"":""latestMinor""}}}}");
                 // Import the same targets as the NuGet package, with the locally built task.
                 File.WriteAllText(Path.Combine(directory, "HelloWorld.csproj"), $@"<Project Sdk=""Microsoft.NET.Sdk"">
@@ -61,6 +65,9 @@ namespace AspectInjector.Tests.Build
             }
         }
 
+        /// <summary>
+        /// Locates the repository root from the test output directory.
+        /// </summary>
         private static string FindRepository()
         {
             for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory != null; directory = directory.Parent)
@@ -69,6 +76,9 @@ namespace AspectInjector.Tests.Build
             throw new DirectoryNotFoundException("Cannot locate AspectInjector.sln");
         }
 
+        /// <summary>
+        /// Runs a child .NET command with a timeout and requires successful completion.
+        /// </summary>
         private static async Task<string> Dotnet(string directory, params string[] arguments)
         {
             var host = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");

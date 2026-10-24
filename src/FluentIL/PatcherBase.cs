@@ -17,9 +17,12 @@ namespace FluentIL
             _log = logger;
         }
 
+        /// <summary>
+        /// Processes an assembly and disposes the resolver created for its references.
+        /// </summary>
         public void Process(string assemblyFile, IReadOnlyList<string> references, bool optimize, bool verbose)
         {
-            // This overload owns the resolver and its cached dependencies.
+            // Dispose loaded dependencies even when reference validation reports an error.
             using (var resolver = GetResolver(assemblyFile, references))
             {
                 if (_log.IsErrorThrown) return;
@@ -27,6 +30,9 @@ namespace FluentIL
             }
         }
 
+        /// <summary>
+        /// Processes an assembly without disposing the caller's dependency resolver.
+        /// </summary>
         public void Process(string assemblyFile, IAssemblyResolver resolver, bool optimize, bool verbose)
         {
             if (!File.Exists(assemblyFile))
@@ -42,7 +48,7 @@ namespace FluentIL
             using (var targetResolver = new TargetAssemblyResolver(resolver))
             using (var assembly = ReadAssembly(assemblyFile, targetResolver, pdbPresent))
             {
-                // Only this operation owns the target; the borrowed resolver supplies dependencies.
+                // Register before weaving can follow dependency back-references.
                 targetResolver.Target = assembly;
                 if (verbose) _log.Log(GenericInfoRule, "Assembly has been read.");
                 var modified = PatchAssembly(assembly, optimize, verbose);
@@ -75,12 +81,15 @@ namespace FluentIL
             return resolver;
         }
 
+        /// <summary>
+        /// Opens the target directly, keeping it out of the dependency cache.
+        /// </summary>
         private AssemblyDefinition ReadAssembly(string assemblyFile, IAssemblyResolver resolver, bool readSymbols)
         {
             return AssemblyDefinition.ReadAssembly(assemblyFile, new ReaderParameters
             {
-                // Register the target before resolving its metadata. Cecil materializes deferred
-                // metadata before writing, so rewriting the original stream remains safe.
+                // Defer metadata reads until the target is registered for cyclic lookups.
+                // Cecil materializes deferred metadata before rewriting the original stream.
                 ReadingMode = ReadingMode.Deferred,
                 ReadWrite = true,
                 AssemblyResolver = resolver,
@@ -88,6 +97,9 @@ namespace FluentIL
             });
         }
 
+        /// <summary>
+        /// Writes the assembly and symbols while the processing scope retains ownership.
+        /// </summary>
         private void WriteAssembly(AssemblyDefinition assembly, bool writeSymbols, bool verbose)
         {
             var param = new WriterParameters();

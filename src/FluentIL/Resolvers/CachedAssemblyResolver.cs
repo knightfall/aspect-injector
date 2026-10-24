@@ -10,6 +10,9 @@ namespace FluentIL.Resolvers
         // Active targets are borrowed; only persistent cache entries are owned here.
         private readonly Dictionary<string, AssemblyDefinition> _targets = new Dictionary<string, AssemblyDefinition>();
 
+        /// <summary>
+        /// Resolves active targets before consulting the owned dependency cache.
+        /// </summary>
         public override AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
         {
             // Preloaded dependencies resolve back-references through this instance too.
@@ -27,6 +30,9 @@ namespace FluentIL.Resolvers
             return result;
         }
 
+        /// <summary>
+        /// Temporarily registers an operation-owned target for dependency back-references.
+        /// </summary>
         internal IDisposable UseTarget(AssemblyDefinition assembly) => new TargetScope(this, assembly);
 
         private sealed class TargetScope : IDisposable
@@ -35,6 +41,9 @@ namespace FluentIL.Resolvers
             private readonly string _name;
             private readonly AssemblyDefinition _previous;
 
+            /// <summary>
+            /// Registers the target while saving any enclosing target registration.
+            /// </summary>
             public TargetScope(CachedAssemblyResolver resolver, AssemblyDefinition assembly)
             {
                 _resolver = resolver;
@@ -43,6 +52,9 @@ namespace FluentIL.Resolvers
                 resolver._targets[_name] = assembly;
             }
 
+            /// <summary>
+            /// Restores the enclosing target registration without disposing the target.
+            /// </summary>
             public void Dispose()
             {
                 if (_resolver == null) return;
@@ -72,6 +84,9 @@ namespace FluentIL.Resolvers
             _cache[name] = assembly;
         }
 
+        /// <summary>
+        /// Disposes cached dependency assemblies without disposing borrowed targets.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposing)

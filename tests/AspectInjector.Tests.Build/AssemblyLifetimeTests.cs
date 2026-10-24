@@ -17,11 +17,17 @@ namespace AspectInjector.Tests.Build
     {
         private readonly string _directory = Path.Combine(Path.GetTempPath(), "AspectInjectorTests", Guid.NewGuid().ToString("N"));
 
+        /// <summary>
+        /// Creates an isolated directory for assembly lifetime checks.
+        /// </summary>
         public AssemblyLifetimeTests()
         {
             Directory.CreateDirectory(_directory);
         }
 
+        /// <summary>
+        /// Verifies file-handle cleanup across successful, skipped, and failed processing.
+        /// </summary>
         [Theory]
         [InlineData(PatchResult.Unmodified, true)]
         [InlineData(PatchResult.Modified, true)]
@@ -58,6 +64,9 @@ namespace AspectInjector.Tests.Build
             }
         }
 
+        /// <summary>
+        /// Verifies that a borrowed resolver remains usable without retaining the processed target.
+        /// </summary>
         [Fact]
         public void BorrowedResolverRemainsUsableAndDoesNotKeepTheDisposedTarget()
         {
@@ -80,6 +89,9 @@ namespace AspectInjector.Tests.Build
             AssertUnlocked(dependency);
         }
 
+        /// <summary>
+        /// Verifies that repeated disposal releases cached assemblies and symbols.
+        /// </summary>
         [Fact]
         public void ResolverDisposalClosesCachedAssembliesAndCanBeRepeated()
         {
@@ -95,6 +107,9 @@ namespace AspectInjector.Tests.Build
             AssertUnlocked(Path.ChangeExtension(dependency, ".pdb"));
         }
 
+        /// <summary>
+        /// Checks that resolver reuse observes replacement targets instead of stale metadata.
+        /// </summary>
         [Theory]
         [InlineData(PatchResult.Unmodified, false)]
         [InlineData(PatchResult.Modified, false)]
@@ -124,6 +139,9 @@ namespace AspectInjector.Tests.Build
             AssertUnlocked(dependency);
         }
 
+        /// <summary>
+        /// Checks that validation errors still dispose an operation-owned resolver.
+        /// </summary>
         [Fact]
         public void OwnedResolverIsDisposedBeforeEarlyReturn()
         {
@@ -138,6 +156,9 @@ namespace AspectInjector.Tests.Build
             Assert.False(patcher.PatchCalled);
         }
 
+        /// <summary>
+        /// Creates a minimal fixture assembly with optional portable symbols.
+        /// </summary>
         private string CreateAssembly(string name, bool withSymbols = true)
         {
             var path = Path.Combine(_directory, name + ".dll");
@@ -155,12 +176,18 @@ namespace AspectInjector.Tests.Build
             return path;
         }
 
+        /// <summary>
+        /// Requires exclusive read/write access to the fixture file.
+        /// </summary>
         private static void AssertUnlocked(string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             Assert.True(stream.CanWrite);
         }
 
+        /// <summary>
+        /// Removes generated assembly fixtures after each test.
+        /// </summary>
         public void Dispose()
         {
             Directory.Delete(_directory, true);
@@ -175,6 +202,9 @@ namespace AspectInjector.Tests.Build
             public bool PatchCalled { get; private set; }
             public AssemblyDefinition Target { get; private set; }
 
+            /// <summary>
+            /// Configures the processing outcome and optional caller-owned resolver.
+            /// </summary>
             public TestPatcher(ILogger logger, PatchResult result, IAssemblyResolver resolver = null) : base(logger)
             {
                 _result = result;
@@ -183,9 +213,15 @@ namespace AspectInjector.Tests.Build
 
             protected override Rule GenericInfoRule => GeneralRules.Info;
             protected override Rule GenericErrorRule => GeneralRules.CompilationMustSecceedIfNoOtherErrors;
+            /// <summary>
+            /// Uses the supplied resolver when testing ownership, otherwise creates one.
+            /// </summary>
             protected override IAssemblyResolver GetResolver(string path, IReadOnlyList<string> references)
                 => _resolver ?? base.GetResolver(path, references);
 
+            /// <summary>
+            /// Exercises target identity and the configured processing outcome.
+            /// </summary>
             protected override bool PatchAssembly(AssemblyDefinition assembly, bool optimize, bool verbose)
             {
                 PatchCalled = true;
@@ -211,6 +247,9 @@ namespace AspectInjector.Tests.Build
         private sealed class TrackingResolver : KnownReferencesAssemblyResolver
         {
             public int DisposeCount { get; private set; }
+            /// <summary>
+            /// Counts disposal calls before releasing cached dependencies.
+            /// </summary>
             protected override void Dispose(bool disposing)
             {
                 DisposeCount++;
@@ -223,9 +262,15 @@ namespace AspectInjector.Tests.Build
         {
             private readonly Dictionary<string, AssemblyDefinition> _cache = new Dictionary<string, AssemblyDefinition>();
 
+            /// <summary>
+            /// Routes default lookups through the simulated external cache.
+            /// </summary>
             public override AssemblyDefinition Resolve(AssemblyNameReference name)
                 => Resolve(name, new ReaderParameters());
 
+            /// <summary>
+            /// Caches parameterized lookups to model a caller-owned external resolver.
+            /// </summary>
             public override AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
             {
                 if (!_cache.TryGetValue(name.FullName, out var assembly))
@@ -233,6 +278,9 @@ namespace AspectInjector.Tests.Build
                 return assembly;
             }
 
+            /// <summary>
+            /// Releases assemblies retained by the simulated external cache.
+            /// </summary>
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -248,6 +296,9 @@ namespace AspectInjector.Tests.Build
         private sealed class TestLogger : ILogger
         {
             public bool IsErrorThrown { get; set; }
+            /// <summary>
+            /// Records error diagnostics without emitting test output.
+            /// </summary>
             public void Log(Rule rule, SequencePoint point, params string[] messages)
             {
                 if (rule.Severity == RuleSeverity.Error)

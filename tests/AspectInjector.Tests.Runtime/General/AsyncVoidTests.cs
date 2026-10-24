@@ -7,6 +7,9 @@ namespace AspectInjector.Tests.Runtime.General
 {
     public class AsyncVoidTests
     {
+        /// <summary>
+        /// Verifies that completion tracking outlasts the former fixed delay.
+        /// </summary>
         [Fact]
         public void WaitsBeyondTheOldFixedDelayAndRestoresTheContext()
         {
@@ -23,6 +26,9 @@ namespace AspectInjector.Tests.Runtime.General
             Assert.Same(previous, SynchronizationContext.Current);
         }
 
+        /// <summary>
+        /// Verifies failure propagation before and after an asynchronous suspension.
+        /// </summary>
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -42,6 +48,9 @@ namespace AspectInjector.Tests.Runtime.General
             Assert.Same(previous, SynchronizationContext.Current);
         }
 
+        /// <summary>
+        /// Verifies that synchronous failures still restore the original context.
+        /// </summary>
         [Fact]
         public void PropagatesSynchronousFailuresAndRestoresTheContext()
         {

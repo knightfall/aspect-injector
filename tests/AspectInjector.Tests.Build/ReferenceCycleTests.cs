@@ -19,8 +19,14 @@ namespace AspectInjector.Tests.Build
         private string TargetPath => Path.Combine(_directory, "Target.dll");
         private string DependencyPath => Path.Combine(_directory, "Dependency.dll");
 
+        /// <summary>
+        /// Creates an isolated directory for reference-cycle fixtures.
+        /// </summary>
         public ReferenceCycleTests() => Directory.CreateDirectory(_directory);
 
+        /// <summary>
+        /// Verifies that dependency back-references reuse the active target on every exit path.
+        /// </summary>
         [Theory]
         [InlineData(false, Outcome.Unmodified)]
         [InlineData(false, Outcome.Modified)]
@@ -63,6 +69,9 @@ namespace AspectInjector.Tests.Build
             }
         }
 
+        /// <summary>
+        /// Verifies that reused dependencies resolve the latest target after replacement.
+        /// </summary>
         [Theory]
         [InlineData(Outcome.Unmodified, false)]
         [InlineData(Outcome.Modified, false)]
@@ -106,6 +115,9 @@ namespace AspectInjector.Tests.Build
             AssertUnlocked(DependencyPath);
         }
 
+        /// <summary>
+        /// Checks that temporary registration preserves an existing caller-owned cache entry.
+        /// </summary>
         [Fact]
         public void TargetRegistrationDoesNotReplaceAnExistingCallerCacheEntry()
         {
@@ -125,6 +137,9 @@ namespace AspectInjector.Tests.Build
             AssertUnlocked(TargetPath);
         }
 
+        /// <summary>
+        /// Checks that a failed nested operation restores the outer target registration.
+        /// </summary>
         [Fact]
         public void NestedProcessingRestoresTheOuterTargetRegistration()
         {
@@ -150,6 +165,9 @@ namespace AspectInjector.Tests.Build
             Assert.NotSame(outer.Target, resolver.Resolve(Name("Target")));
         }
 
+        /// <summary>
+        /// Creates a resolver that tracks unexpected target loads.
+        /// </summary>
         private TrackingResolver CreateResolver()
         {
             var resolver = new TrackingResolver();
@@ -158,17 +176,24 @@ namespace AspectInjector.Tests.Build
             return resolver;
         }
 
+        /// <summary>
+        /// Exercises either the resolver-owning or resolver-borrowing processing overload.
+        /// </summary>
         private void Process(CyclePatcher patcher, TrackingResolver resolver, bool owned)
         {
             if (owned) patcher.Process(TargetPath, new[] { DependencyPath }, false, false);
             else patcher.Process(TargetPath, resolver, false, false);
         }
 
+        /// <summary>
+        /// Creates a valid inheritance chain spanning cyclic assembly references.
+        /// </summary>
         private void WriteFixture(int generation, bool writeDependency = true)
         {
             using var target = AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition("Target", new Version(1, 0, 0, 0)), "Target", ModuleKind.Dll);
             using var dependency = AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition("Dependency", new Version(1, 0, 0, 0)), "Dependency", ModuleKind.Dll);
             var root = new TypeDefinition("Test", "Root", TypeAttributes.Public, target.MainModule.TypeSystem.Object);
+            // Distinguish freshly loaded targets from stale cached metadata.
             root.Fields.Add(new FieldDefinition("Generation", FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal | FieldAttributes.HasDefault, target.MainModule.TypeSystem.Int32) { Constant = generation });
             target.MainModule.Types.Add(root);
             var middle = new TypeDefinition("Test", "Middle", TypeAttributes.Public, dependency.MainModule.ImportReference(root));
@@ -178,16 +203,28 @@ namespace AspectInjector.Tests.Build
             if (writeDependency) dependency.Write(DependencyPath);
         }
 
+        /// <summary>
+        /// Builds an assembly reference matching the generated fixture version.
+        /// </summary>
         private static AssemblyNameReference Name(string name) => new AssemblyNameReference(name, new Version(1, 0, 0, 0));
+        /// <summary>
+        /// Requires exclusive read/write access to the fixture file.
+        /// </summary>
         private static void AssertUnlocked(string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             Assert.True(stream.CanWrite);
         }
 
+        /// <summary>
+        /// Removes generated reference-cycle fixtures after each test.
+        /// </summary>
         public void Dispose() => Directory.Delete(_directory, recursive: true);
         public enum Outcome { Unmodified, Modified, Throws }
 
+        /// <summary>
+        /// Checks cycle resolution before applying a configured patch outcome or nested callback.
+        /// </summary>
         private sealed class CyclePatcher(TrackingResolver resolver, Outcome outcome, Action<AssemblyDefinition> afterResolve = null) : PatcherBase(new QuietLogger())
         {
             public AssemblyDefinition Target { get; private set; }
@@ -195,7 +232,13 @@ namespace AspectInjector.Tests.Build
             public TypeDefinition Root { get; private set; }
             protected override Rule GenericInfoRule => GeneralRules.Info;
             protected override Rule GenericErrorRule => GeneralRules.CompilationMustSecceedIfNoOtherErrors;
+            /// <summary>
+            /// Uses the tracking resolver for the resolver-owning overload.
+            /// </summary>
             protected override IAssemblyResolver GetResolver(string assemblyFile, IReadOnlyList<string> references) => resolver;
+            /// <summary>
+            /// Checks dependency back-references before applying the configured fixture outcome.
+            /// </summary>
             protected override bool PatchAssembly(AssemblyDefinition target, bool optimize, bool verbose)
             {
                 Target = target;
@@ -216,11 +259,17 @@ namespace AspectInjector.Tests.Build
         {
             public int TargetLookups { get; private set; }
             public int DisposeCount { get; private set; }
+            /// <summary>
+            /// Counts target loads that bypass the scoped target registration.
+            /// </summary>
             protected override AssemblyDefinition LookupAssembly(AssemblyNameReference name, ReaderParameters parameters)
             {
                 if (name.Name == "Target") TargetLookups++;
                 return base.LookupAssembly(name, parameters);
             }
+            /// <summary>
+            /// Counts disposal calls before releasing cached assemblies.
+            /// </summary>
             protected override void Dispose(bool disposing)
             {
                 DisposeCount++;
@@ -231,6 +280,9 @@ namespace AspectInjector.Tests.Build
         private sealed class QuietLogger : ILogger
         {
             public bool IsErrorThrown => false;
+            /// <summary>
+            /// Suppresses diagnostics for the reference-cycle fixture.
+            /// </summary>
             public void Log(Rule rule, SequencePoint point, params string[] messages) { }
         }
     }

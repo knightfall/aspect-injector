@@ -42,6 +42,7 @@ namespace AspectInjector.Tests.Advices
             Checker.Passed = false;
 
             var a = new AsyncTests_Target();
+            // Wait for after advice instead of assuming a fixed delay is sufficient.
             AsyncVoid.Run(a.Do3);
 
             Assert.True(Checker.Passed);
