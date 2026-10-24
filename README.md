@@ -69,8 +69,7 @@ dotnet test -c Release --no-build -f net10.0
 The build tests check DLL/PDB handle release after successful, unchanged, and
 failed processing, resolver ownership, and dependency reference cycles. They also build,
 rebuild, and run console applications with and without aspects using the .NET 8
-and .NET 10 SDKs. The application workflow runs the tests on Linux. The manual
-reference-cycle proof workflow runs on Linux, Windows, and macOS.
+and .NET 10 SDKs. The application workflow runs the tests on Linux.
 
 ### Simple advice
 #### Create an aspect with simple advice:
