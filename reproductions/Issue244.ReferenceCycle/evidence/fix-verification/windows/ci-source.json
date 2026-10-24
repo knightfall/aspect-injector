@@ -1,0 +1,10 @@
+{
+  "workflow_run": "https://github.com/knightfall/aspect-injector/actions/runs/39843422361",
+  "job_id": 120050274445,
+  "head_commit": "49de0f440f2da62e66137426a046d869e3de7795",
+  "artifact_id": 12454885485,
+  "artifact_name": "reference-cycle-proof-Windows",
+  "artifact_archive_sha256": "ed0ec35326e1a758652af3ff1cf07d521032ae1d9728bb2241ab12dbafd4e9a0",
+  "archive_digest_verified_before_extraction": true,
+  "checked_in_text_line_endings": "LF (converted from artifact CRLF; observation data unchanged)"
+}

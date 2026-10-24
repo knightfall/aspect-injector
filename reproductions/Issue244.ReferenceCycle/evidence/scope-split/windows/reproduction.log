@@ -1,0 +1,20 @@
+P1 PASS Both executions use the same Mono.Cecil binary
+P2 PASS Both revisions receive byte-identical inputs for every corresponding case
+P3 PASS CLR accepts the non-cyclic inheritance chain, including the assembly-reference cycle
+P4 PASS Every input DLL can be opened exclusively before processing
+P5 PASS The control succeeds and releases the target in both revisions
+P6 PASS The baseline resolves cycle back-references to the operation target and releases its file
+P7 PASS Candidate dependency modules use the underlying resolver
+P8 PASS The candidate attempts an extra read-only target load through the underlying resolver
+P9 PASS Windows reports ERROR_SHARING_VIOLATION (32) during both candidate cycle operations
+P10 PASS Unwinding the failed operations releases the target
+F1 PASS Fixed and reviewed revisions use the same Mono.Cecil binary
+F2 PASS Fixed and reviewed revisions receive byte-identical fixture assemblies
+F3 PASS Every fixed-revision fixture is CLR-valid and initially unlocked
+F4 PASS Every fixed-revision operation completes and direct self-resolution returns T
+F5 PASS Fixed cycle back-references resolve to the operation-owned target T
+F6 PASS The fixed resolver performs zero underlying target loads
+F7 PASS Every fixed-revision target is unlocked immediately after Process and after resolver disposal
+F8 PASS Processing disposes owned resolvers once and leaves borrowed resolvers undisposed
+REGRESSION_REPRODUCED=true
+FIX_VERIFIED=true

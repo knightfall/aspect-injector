@@ -71,6 +71,17 @@ failed processing, resolver ownership, and dependency reference cycles. They als
 rebuild, and run console applications with and without aspects using the .NET 8
 and .NET 10 SDKs. The application workflow runs the tests on Linux.
 
+### Reproductions
+
+Standalone reproduction tools and captured evidence are maintained on this branch:
+
+- [Reference-cycle proof](reproductions/Issue244.ReferenceCycle/README.md), with a
+  manually triggered [cross-platform workflow](.github/workflows/reference-cycle-proof.yml).
+- [Async-void test race](reproductions/AsyncVoidTestRace/README.md).
+
+The branch retains the historical commits used by the pinned proof. Use a full
+clone so those commits are available to `git archive`.
+
 ### Simple advice
 #### Create an aspect with simple advice:
 ```C#

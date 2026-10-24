@@ -1,0 +1,5 @@
+Test run for /workspace/aspect-injector/tests/AspectInjector.Tests.Build/bin/Release/net8.0/AspectInjector.Tests.Build.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: /workspace/aspect-injector/artifacts/reference-cycle-tests-after/build-after-net8.trx
+
+Passed!  - Failed:     0, Passed:    35, Skipped:     0, Total:    35, Duration: 13 s - AspectInjector.Tests.Build.dll (net8.0)
