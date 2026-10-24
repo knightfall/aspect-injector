@@ -4,8 +4,7 @@
 	"features": {
 		"ghcr.io/devcontainers/features/dotnet:2": {
 			"version": "none",
-			"additionalVersions": "8.0",
-			"dotnetRuntimeVersions": "6.0"
+			"additionalVersions": "8.0"
 		}
 	},
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,Z",
